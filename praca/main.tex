@@ -1,0 +1,50 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+% pakiet dodaje wcięcie do pierwszego paragrafu po
+% tytule. Domyślnie pierwszy nie ma wcięcia.
+\usepackage{indentfirst}
+\usepackage{graphicx}
+\usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks,
+	citecolor=black,
+	filecolor=black,
+	linkcolor=black,
+	urlcolor=black	
+}
+
+\graphicspath{{images/}}
+
+\begin{document}
+	\pagenumbering{gobble}
+	% strona tytułowa
+	\input{title_page}
+	
+	% pusta strona
+	\mbox{}
+	\thispagestyle{empty}
+	\newpage
+	
+	\pagenumbering{arabic}
+	
+	% spis treści
+	\tableofcontents
+	\newpage
+	
+	% wstęp
+	\input{00_chapter}
+	\newpage
+	
+	\input{01_chapter}
+	\newpage
+	
+	\input{02_chapter}
+	\newpage
+	
+	
+\end{document}
