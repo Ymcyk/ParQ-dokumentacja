@@ -10,6 +10,7 @@
 \usepackage{graphicx}
 \usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
 \usepackage{hyperref}
+\usepackage{setspace}
 \hypersetup{
 	colorlinks,
 	citecolor=black,
@@ -30,28 +31,29 @@
 	\thispagestyle{empty}
 	\newpage
 	
-	\pagenumbering{arabic}
-	
-	% spis treści
-	\tableofcontents
-	\newpage
-	
-	% wstęp
-	\input{00_chapter}
-	\newpage
-	
-	\input{01_chapter}
-	\newpage
-	
-	\input{02_chapter}
-	\newpage
-	
-	% bibliografia
-	\addcontentsline{toc}{section}{Literatura}
-	\bibliographystyle{plain}
-	\bibliography{bibfile.bib} 
-	% umożliwia wypisanie całej bibliografii bez
-	% wcześniejszego cytowania
-	\nocite{*}
-
+	\begin{onehalfspacing}
+		% spis treści
+		\tableofcontents
+		\newpage
+		
+		\pagenumbering{arabic}
+		
+		% wstęp
+		\input{00_chapter}
+		\newpage
+		
+		\input{01_chapter}
+		\newpage
+		
+		\input{02_chapter}
+		\newpage
+		
+		% bibliografia
+		\bibliographystyle{plain}
+		\bibliography{bibfile.bib}
+		% umożliwia wypisanie całej bibliografii bez
+		% wcześniejszego cytowania
+		\nocite{*}
+		\addcontentsline{toc}{section}{Literatura} 
+	\end{onehalfspacing}
 \end{document}
