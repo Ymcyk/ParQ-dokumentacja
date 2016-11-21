@@ -9,4 +9,4 @@
 
 ## LaTex
 
-_praca/main.pdf_ - skompilowany plik pdf z pracą inżynierską
+[praca/main.pdf](praca/main.pdf) - skompilowany plik pdf z pracą inżynierską
