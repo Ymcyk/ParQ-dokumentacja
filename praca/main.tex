@@ -9,8 +9,8 @@
 \usepackage{indentfirst}
 \usepackage{graphicx}
 \usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
-\usepackage{hyperref}
 \usepackage{setspace}
+\usepackage{hyperref}
 \hypersetup{
 	colorlinks,
 	citecolor=black,
@@ -18,10 +18,13 @@
 	linkcolor=black,
 	urlcolor=black	
 }
+\usepackage{times}
+\setcounter{secnumdepth}{3}
 
 \graphicspath{{images/}}
 
 \begin{document}
+	\nocite{*}
 	\pagenumbering{gobble}
 	% strona tytułowa
 	\input{title_page}
@@ -33,10 +36,10 @@
 	
 	\begin{onehalfspacing}
 		% spis treści
+		\pagenumbering{arabic}
+		\setcounter{page}{3}
 		\tableofcontents
 		\newpage
-		
-		\pagenumbering{arabic}
 		
 		% wstęp
 		\input{00_chapter}
@@ -48,12 +51,8 @@
 		\input{02_chapter}
 		\newpage
 		
-		% bibliografia
 		\bibliographystyle{plain}
 		\bibliography{bibfile.bib}
-		% umożliwia wypisanie całej bibliografii bez
-		% wcześniejszego cytowania
-		\nocite{*}
 		\addcontentsline{toc}{section}{Literatura} 
 	\end{onehalfspacing}
 \end{document}
