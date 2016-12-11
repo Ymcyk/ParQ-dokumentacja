@@ -5,3 +5,6 @@
 *.gz
 *.bbl
 *.blg
+
+*.vpp.bak*
+*.vpp.lck
