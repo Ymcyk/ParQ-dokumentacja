@@ -64,7 +64,8 @@ Poniżej przedstawione zostały różne momenty pobrania, z jakimi można się s
 	\item \textbf{System natychmiastowych płatności} (\textit{pay now}) - występuje w przypadku kart debetowych. Obciążenie rachunku następuje w momencie dokonania płatności. Nie ma możliwości uzyskania kredytu.
 	\item \textbf{System z odroczoną płatnością} (\textit{pay later}) - do tego typu płatności należą karty kredytowe i obciążeniowe. Rachunek posiadacza takich instrumentów płatniczych zostanie obciążony, dopiero w momencie spłaty zaciągniętego kredytu.
 \end{itemize}
-Dużą popularność zyskują rozwiązania typu \textit{pay-before}. Funkcjonują one pod postacią wirtualnych portmonetek, gdzie użytkownicy trzymają elektroniczne pieniądze. Najpierw zasilone wpłaconą przez właściciela sumą, mogą być wykorzystywane do najróżniejszych transakcji finansowych. Są opcją szczególnie korzystną w przypadku częstych opłat, ponieważ nie są z nimi związane prowizje od każdej operacji, jak w przypadku kart. Także są bezpieczniejsze - użytkownik nie łączy się za każdym razem z bankiem. Portmonetki mogą funkcjonować tylko w ramach jednego systemu, jak płatności za bilet w komunikacji miejskiej. Mogą też zastępować kartę płatniczą w internecie - co jest zapewniane przez dostawców usług płatniczych, takich jak PayPal. 
+%TODO przepisać, przenieść tutaj opisy poszczególnych momentów, pay-before w potaci portmonetek zostanie szczegółowo opisany niżej
+Dużą popularność zyskują rozwiązania typu \textit{pay-before}. Funkcjonują one pod postacią wirtualnych portmonetek, gdzie użytkownicy trzymają elektroniczne pieniądze. Najpierw zasilone wpłaconą przez właściciela sumą, mogą być wykorzystywane do najróżniejszych transakcji finansowych. Są opcją szczególnie korzystną w przypadku częstych opłat, ponieważ nie są z nimi związane prowizje od każdej operacji, jak w przypadku kart. Także są względnie bezpieczniejsze - użytkownik nie łączy się za każdym razem z bankiem, a w przypadku oszustwa - nie przekroczy środków zgromadzonych na koncie.
 
 \subsubsection*{Metody płatności w internecie}
 Zakupy w internecie nie muszą dotyczyć tylko usług cyfrowych, niedostępnych w  sklepach stacjonarnych. Często stanowią konkurencję dla tradycyjnych form sprzedaży, posiadając nad nimi wiele zalet (chociażby możliwość zwrotu towaru do 14 dni od zakupu \cite{wszystko_o_platnosciach}). Zapłatę w sklepach internetowych bardzo często można dokonać na wiele różnych sposobów, dostosowanych do prywatnych preferencji kupującego. Znajdują się wśród nich także metody nie należące do płatności elektronicznych, jak przelewy tradycyjne.
@@ -83,17 +84,26 @@ Częściowym rozwiązaniem na problemy związane z przelewami, jest stosowanie k
 
 SMS Premium to specjalna usługa telefoniczna, pozwalająca na przeprowadzanie opłat używając do tego telefonu komórkowego. Wiadomość tekstowa wysłana na specjalny numer, obciążona jest dodatkową opłatą. W ten sposób sprzedawca mający podpisaną umowę z operatorem telefonicznym, może otrzymywać od niego pieniądze, za wysłany SMS. Ogromnymi zaletami tej metody jest duża szybkość realizacji, a także prostota obsługi. Niestety, wysokość prowizji przekraczająca 50\%, sprawia że jest często nieopłacalna. Także jej ograniczenie do niewielkich kwot, od 1 zł do 19 zł, decyduje o jej coraz mniejszym wykorzystaniu.
 
-Coraz częściej spotykane są, opisywane wcześniej, płatności portfelami elektronicznymi. Po utworzeniu oraz zasileniu konta, użytkownik może dysponować swoimi środkami w postaci pieniędzy elektronicznych. Ta forma cechuje się bardzo dużą szybkością realizacji transakcji, zwłaszcza jeśli odbywa się w ramach tego samego systemu. Dodatkowo w takiej sytuacji, przekazywanie pieniędzy najczęściej pozbawione jest jakiejkolwiek prowizji. Niestety ta forma płatności ograniczona jest tylko do jednego systemu elektronicznych portmonetek. Klient nie będzie miał możliwości jej wykorzystania, jeśli taka możliwość nie jest udostępniana przez sklep internetowy.
+%TODO przepisać po zmianie poprzedniego akapitu o pay-before
+Coraz częściej spotykane są, opisywane wcześniej, płatności portfelami elektronicznymi. Po utworzeniu oraz zasileniu konta, użytkownik może dysponować swoimi środkami w postaci pieniędzy elektronicznych. Ta forma cechuje się bardzo dużą szybkością realizacji transakcji, zwłaszcza jeśli odbywa się w ramach tego samego systemu. Dodatkowo w takiej sytuacji, przekazywanie pieniędzy najczęściej pozbawione jest jakiejkolwiek prowizji. Niestety płatności ograniczona jest tylko do jednego systemu elektronicznych portmonetek. Klient nie będzie miał możliwości jej wykorzystania, jeśli taka możliwość nie jest udostępniana przez sklep internetowy.
 \begin{center}
-	\includegraphics[width=1\linewidth]{01_chapter/popularnosc_platnosci}
+	\includegraphics[width=1\linewidth]{01/popularnosc_platnosci}
 \end{center}
 
 
-\subsection{Bramki płatności - dostawcy usług płatniczych}
+%TODO napisać o nich może więcej, dokłądniej. Nazwać to Systemy Płatności, wyjaśnić te wszsytkie nazwy. ie będzie pewnie wiele dłuższe, no ale to jest w tytule
+\subsection{Bramki płatności}
 % co to jest. Opowiedzieć o związku z portfelami - ale że to inne pojęcia
 % tutaj można dać jakiś diagramik jak to wszsytko wygląda
 % opisać działanie
 % zalety, dlaczego coś takiego stosować
 % tabela z dostępnymi usługodawcami
+Wdrożenie jednej lub kilku z wymienionych metod we własnym zakresie nie jest prostym rozwiązaniem. Implementacja z pominięciem wszelkich pośredników może okazać się zajęciem zbyt kosztownym i czasochłonnym, szczególnie dla firm rozpoczynających swoją działalność. Im więcej metod sprzedawca chce udostępnić, tym proces ten jest dłuższy i bardziej skomplikowany, angażując do tego kolejne podmioty. Wymaga to podpisania wielu dodatkowych umów z bankiem, czy posiadania specjalnego konta. 
 
+Bardzo dobrą alternatywą jest skorzystanie z usług operatorów płatności elektronicznych. Są oni pośrednikami transakcji przeprowadzanych w internecie, przyjmując opłaty od klientów i przekazując następnie na rachunek sprzedawców. Ich usługi polegają na integrowaniu wielu metod płatności, dzięki czemu przedsiębiorca nie musi ręcznie wdrażać każdej z nich. Wystarczy, że podpisze umowę z jednym z dostawców systemów płatniczych. Jest to rozwiązanie korzystne także ze strony osoby dokonującej zakupów. Oferowany jest jej szeroki zakres metod, w jakich może dokonać płatności, np.: karty płatnicze, e-przelewy, portmonetki elektroniczne. Korzystanie z usług operatorów płatności jest bardzo częste. W popularnym polskim serwisie aukcyjnym Allegro, wszystkie opłaty realizowane są z pośrednictwem systemu PayU.
 
+Przechodząc do finalizacji transakcji, klient proszony jest na stronie sprzedawcy o wybranie metody płatności. W przypadku przelewu internetowego, kierowany jest jeszcze na stronę swojego banku, skąd po podaniu danych, wraca na witrynę sprzedawcy. Po zaakceptowaniu zapłaty, operator usług dostaje przelew z banku klienta, skąd dalej w różny sposób pieniądze zostają przekazywane na rachunek sprzedawcy.
+\begin{center}
+	\includegraphics[width=1\linewidth]{01/diagram_system_platnosci}
+\end{center}
+Na rynku istnieje wielu dostawców takich usług, np.: PayU, Dotpay, Przelewy24, czy PayPal. Różnią się oni między sobą przede wszystkim prowizjami za wypłatę pieniędzy, czy za skorzystanie z jakiejś metody płatności. Większość z nich pełni głównie rolę pośrednią, znajdując się między bankiem kupującego, a sprzedającego. Niektóre z nich, jak PayPal, pełnią także funkcję elektronicznych portmonetek. W tej sytuacji pieniądze od klienta nie trafiają do banku, a przechowywane są w formie elektroniczne. Sprzedawca decyduje czy i kiedy chce aby zostały one przelane na jego konto bankowe. 
