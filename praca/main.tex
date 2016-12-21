@@ -1,7 +1,8 @@
 \documentclass[12pt,a4paper]{article}
 
 \usepackage[T1]{fontenc}
-\usepackage[polish]{babel}
+%\usepackage[polish]{babel}
+\usepackage{polski}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 % pakiet dodaje wcięcie do pierwszego paragrafu po
@@ -24,8 +25,17 @@
 \usepackage{multirow}
 \usepackage{wrapfig}
 \usepackage{listings}
+\usepackage{chngcntr}
 \setcounter{secnumdepth}{3}
 \graphicspath{{images/}}
+
+\renewcommand*{\figurename}{Rys.}
+\renewcommand*{\tablename}{Tab.}
+\renewcommand{\thetable}{\arabic{section}.\arabic{table}}
+\renewcommand{\thefigure}{\arabic{section}.\arabic{figure}}
+
+\counterwithin{figure}{section}
+\counterwithin{table}{section}
 
 \begin{document}
 	\nocite{*}
