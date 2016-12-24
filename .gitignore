@@ -5,6 +5,8 @@
 *.gz
 *.bbl
 *.blg
+_minted-main
+*.mintedcmd
 
 *.vpp.bak*
 *.vpp.lck

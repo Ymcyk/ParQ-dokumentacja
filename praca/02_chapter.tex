@@ -1,10 +1,10 @@
 \section{Opis wykorzystanych technologii}
-Realizacja celu pracy wymagała wykorzystania wielu różnych technologii. Aplikacja na telefon odczytująca kody QR, musiała zostać stworzona na jeden z systemów mobilnych. Podobnie serwer wymagał wybrania konkretnego frameworku. W tym rozdziale zostały przedstawione oraz omówione użyte podejścia.
+Realizacja celu pracy wymagała wykorzystania wielu różnych technologii. Zarówno do realizacji aplikacji mobilnej, jak i serwerowej, konieczne było wybranie konkretnych metod. W tym rozdziale zostały one przedstawione oraz szczegółowo omówione.
 
 \subsection{Kody graficzne QR}
 Przedstawianie danych w postaci kodów graficznych nie jest niczym innowacyjnym - w sklepach towary oznaczane są za pomocą jednowymiarowego kodu kreskowego. Kombinacja jasnych oraz ciemnych linii umożliwia przechowywanie danych, które odczytywane są za pomocą skanera z laserem. Tego typu metody stosuje się głównie w celach identyfikacji. Do przechowywania większej ilości danych wykorzystuje się częściej tzw. kody 2D.
 
-Kody QR (ang. Quick Respone - szybka odpowiedź) to dwuwymiarowe, matrycowe, kwadratowe kody graficzne. Składają się z modułów, czyli kombinacji ciemnych oraz jasnych kwadratów, które są nośnikami danych. Zostały stworzone przez japońską firmę Denso-Wave w 1994 r \cite{thonky_tutorial}. Według postanowień licencyjnych mogą być wykorzystywane bez żadnych opłat, a sam standard jest opisany w normie ISO/IEC 18004:2015 \cite{norma_qr}. Dzięki dodatkowemu wymiarowi, pozwalają na przechowywanie większej ilości informacji (do ok. 7000 liczb lub 4000 znaków alfanumerycznych) niż kody kreskowe, posiadające tylko jeden wymiar. Ponadto, zapewniają zdecydowanie lepszą korekcję błędów. Nawet częściowo uszkodzony kod może zostać poprawnie odczytany. Posiadają kilka miejsc szczególnych do ułatwienia orientacji podczas odkodowywania. Ich liczba zależy od rozmiaru kodu.
+Kody QR (ang. Quick Respone - szybka odpowiedź) to dwuwymiarowe, kwadratowe kody graficzne. Składają się z modułów, czyli kombinacji ciemnych oraz jasnych kwadratów, które są nośnikami danych. Zostały stworzone przez japońską firmę Denso-Wave w 1994 r \cite{thonky_tutorial}. Według postanowień licencyjnych mogą być wykorzystywane bez żadnych opłat, a sam standard jest opisany w normie ISO/IEC 18004:2015 \cite{norma_qr}. Dzięki dodatkowemu wymiarowi, pozwalają na przechowywanie większej ilości informacji (do ok. 7000 liczb lub 4000 znaków alfanumerycznych) niż kody kreskowe, posiadające tylko jeden wymiar. Ponadto, zapewniają zdecydowanie lepszą korekcję błędów. Nawet częściowo uszkodzony kod może zostać poprawnie odczytany. Posiadają kilka miejsc szczególnych do ułatwienia orientacji podczas odkodowywania. Ich liczba zależy od rozmiaru kodu.
 
 \begin{figure}[h]
 	\begin{center}
@@ -16,13 +16,12 @@ Kody QR (ang. Quick Respone - szybka odpowiedź) to dwuwymiarowe, matrycowe, kwa
 
 Pierwotnie bardzo duże zastosowanie kody QR znalazły w logistyce, gdzie zawierały informacje o przesyłanych paczkach. Współcześnie kojarzone są przeważnie z urządzeniami mobilnymi. Spotykane na przystankach, w sklepach lub magazynach służą do komunikacji z użytkownikami smartfonów, przełamując niejako barierę między światem wirtualnym, a rzeczywistym. Kod zawiera informacje jedynie w postaci liczb, liter i symboli. Jednak odpowiednie formatowanie informacji, pozwala na dodatkowe interpretowanie ich przez urządzenie przenośne. I tak po zeskanowaniu może zostać wysłana wiadomość e-mail, albo dodany numer do kontaktów. Najczęściej jednak zawierają adresy URL, które powodują wyświetlenie odpowiedniej strony w przeglądarce internetowej telefonu.
 
-% jeszcze można zrobić część o budowie kodu, gdzie wstawi się grafikę z wiki i opowie o tym z jakich elementów się składa
-\subsubsection*{Sposoby kodowania, generowania oraz odczytywania}
-Aby przedstawić informacje w postaci kodu QR, trzeba najpierw określić rodzaj oraz ilość danych, jakie mają zostać zakodowane. Istnieją trzy główne parametry: wersja, typ danych oraz poziom korekcji błędów.
+\subsubsection*{Sposoby kodowania}
+Przed zakodowaniem informacji do postaci kodu QR, należy określić trzy główne parametry. Są to: wersja, typ danych oraz poziom korekcji błędów.
 
-Wersje to inaczej rozmiary kodu numerowane od 1 do 40. Decydują o ilości modułów, czyli wielkości danych jakie można przechować. Wersja pierwsza posiada 21x21 modułów, a każda kolejna jest większa o trzy na każdy bok. Maksymalny rozmiar to 177x177 dla wersji 40. 
+Najważniejszym parametrem, wpływającym bezpośrednio na ilość danych jakie kod będzie w stanie przechować, to jego wersja. Numerowana jest od 1 do 40 i każda z nich ma przypisany do siebie rozmiar. Wersja pierwsza posiada 21 na 21 modułów, druga 24 na 24, a ostatnia, czyli czterdziesta - 177 na 177. Każda kolejna jest większa od poprzedniej o trzy moduły na bok. Oczywiście im numer wersji, czyli też rozmiar, jest większy, tym więcej danych będzie można zakodować. 
 
-Rodzaj kodowanych danych zależny jest od typu informacji, jaka ma być przechowywana. Ten parametr decyduje o ilości bitów przypadających na jeden znak (co wpływa na maksymalną pojemność), oraz na sposób w jaki dane mają zostać odkodowane. Możliwe są cztery sposoby kodowania:
+Równie ważne jak wybór wersji jest określenie typu danych, jaki ma być zakodowany. Informacja o typie zapisywana jest w kodzie QR, dzięki czemu podczas odczytywania czytnik wie jak ma interpretować dane. Dodatkowo, ta informacja decyduje też o maksymalnej pojemności. Typ numeryczny przechowuje informacje jedynie o liczbach, dlatego będzie potrzebował mniej bitów na znak, niż w przypadku danych alfanumerycznych. Dostępne są cztery typy:
 \begin{itemize}
 	\item Numeryczny -- ten tryb pozwala na zakodowanie tylko cyfr od 0 do 9, co umożliwia maksymalnie na przechowywanie 7089 znaków.
 	\item Alfanumeryczny -- oprócz cyfr, także wielkie litery oraz znaki '\$', '\%', '*', '+', '-', '.', '/', ':' i spacja. Można zakodować do 4296 znaków. 
@@ -59,9 +58,10 @@ Poziom korekcji błędów służy do określenia, czy dane zostały odczytane po
 		\end{tabular}
 	\end{center}
 \end{table}
-Istnieje wiele sposobów na generowanie kodów QR. Jednym z nich są strony www, gdzie po podaniu danych i parametrów można pobrać kod w postaci obrazka, np.: http://www.qr-code-generator.com/. Innym rozwiązaniem jest skorzystanie z gotowych bibliotek i wygenerowanie takiego kodu z poziomu języka programowania. I na przykład w Pythonie można skorzystać z modułu \textit{qrcode}.
 
-Odczytanie, czyli odkodowanie informacji także możliwe jest na wiele sposobów. Razem z systemami mobilnymi często dostarczane są specjalne aplikacje, które wykorzystując wbudowaną kamerę, pozwalają na odczytanie zakodowanych danych. Podobnie, takie rozwiązanie możliwe jest dzięki odpowiednim biblioteką. W Androidzie jest to dostępna za darmo \textit{Zebra Crossing}.
+Tworzenie kodu graficznego QR jest procesem dość złożonym. Po analizie danych określającej ich typ, konieczne jest ich odpowiednie zakodowanie. Informacje dzielone są na bloki, do których dodawane są kolejne bity związane z korekcją błędów. Przed przedstawieniem danych w postaci modułów QR, ważne jest również odpowiednie ich maskowanie. Zbyt duża ilość kwadratów o tym samym kolorze w jednym miejscu, może spowodować błędne odczytanie. Dopiero po tych kilku etapach, może zostać wygenerowany kod. Praktycznie dla każdego języka istnieją biblioteki, które wykonują te wszystkie procesy. Wystarczy podać jedynie parametry kodu z danymi. Na przykład w Pythonie takim modułem jest \textit{qrcode}.
+
+Odczytanie, czyli odkodowanie informacji możliwe jest na wiele sposobów. Razem z systemami mobilnymi często dostarczane są specjalne aplikacje, które wykorzystując wbudowaną kamerę, pozwalają na odczytanie zakodowanych danych. Podobnie, takie rozwiązanie możliwe jest dzięki odpowiednim biblioteką. W Androidzie jest to dostępna za darmo \textit{Zebra Crossing}.
 
 
 \subsection{System Android}
@@ -135,5 +135,88 @@ Układy definiują jak dany ekran ma wyglądać, natomiast aktywności (ang. act
 Rozwiązania mobilne cieszą się coraz większym zainteresowaniem. Tylko w sklepie z aplikacjami Androida, Google Play, liczba programów przekroczyła w 2015 r. 1,6 mln \cite{biblia_ebiznesu_2}. Powstające coraz to nowe urządzenia, na których zainstalowany jest Android sprawia, że umiejętność programowania na tą platformę będzie coraz bardziej doceniana.
 
 
-\subsection{Aplikacja internetowa w Django}
-% wprowadzenie o tym, że frameworki nadają się do różnych zadań
+\subsection{Framework Django}
+Frameworki aplikacji internetowych powstały z myślą o zwolnieniu programisty z obowiązku pisania części kodu, który jest wspólny dla większości serwisów. Może to być dostęp do bazy danych, obsługa linków (ang.~routing), czy zarządzanie sesjami. Dodatkowo, pisanie aplikacji internetowej od podstaw, jest zadaniem czasochłonnym oraz dość trudnym. Frameworki są odpowiedzią na te problemy, dostarczając zestaw gotowych oraz przetestowanych rozwiązań, które należy dostosować do własnych potrzeb. Umożliwiają utworzenie struktury plików projektu, na bazie którego dalej będzie rozwijana aplikacja. Każdy z najpopularniejszych języków programowania oferuje duży wybór silników, przeznaczonych do tworzenia usług internetowych i np.: w C\# napisane zostały ASP.NET i MonoRail, w Javie - Spring i JavaServer Faces, a w Python - Django i Flask. Mogą się różnić przede wszystkim stopniem złożoności, dzięki czemu nadają się do różnych zastosowań - prezentują odmienne sposoby realizacji podobnych zadań. Wybór programisty będzie głównie zależny od jego prywatnych preferencji.
+
+\subsubsection*{Początki Django}
+Django rozwijany jest jako wolne oprogramowanie na GitHub'ie, w ramach fundacji Django Software Foundation, ale skupiaja wokół siebie także wielu niezależnych twórców. Został napisany w Pythonie, stając się z czasem najpopularniejszym frameworkiem dla tego języka. Jego historia rozpoczęła się w 2003~r., kiedy to dwóch programistów Adrian Holovaty i Simon Willison zaczęli używać Pythona do tworzenia aplikacji webowych dla kilku serwisów informacyjnych, m.in. Lawrence.com. Praca w środowisku dziennikarskim, cechująca się napiętym grafikiem, wymagała niezwykle szybkiej realizacji zadań. Z tej konieczności opracowali własny silnik, który w 2005~r., już pod nazwą Django, został udostępniony publicznie. To właśnie szybkość oraz względna łatwość tworzenia aplikacji są jego głównymi zaletami.
+
+\subsubsection*{Charakterystyka}
+% trochę upośledzone MVC
+% diagram 
+% zabezpieczenia
+% admin
+% modele
+% o dodatkach parę słów
+Aplikacje Django tworzone są w interpretowanym języku Python, przeznaczonym głównie do pisania skryptów. Jako że jego interpretery dostępne są na wielu platformach, jest on niezależny od systemu operacyjnego. Dodatkowo wsparcie do wielu paradygmatów (imperatywnego, funkcyjnego, obiektowego), przekłada się na jego szerokie zastosowanie. Oprócz programowania serwerów, jest używany do pisania testów, aplikacji z graficznym interfejsem, a także gier 3D. Wyróżnia się głównie charakterystyczną składnią, w której poszczególne bloki kodu odseparowane są wcięciami (spacje lub tabulator). Wpływa to na zwiększoną czytelność kodu.
+
+Architektura aplikacji sieciowych typu klient-serwer, opiera się często na wzorcu projektowym Model-View-Controller (pol.~Model-Widok-Kontroler), w skrócie MVC. Jego ideą jest odseparowanie części prezentacji danych, od kodu odpowiedzialnego za ich przetwarzanie. Aplikacja dzielona jest w nim na trzy główne części. Model jest reprezentacją danych oraz logiki problemu. Widok odpowiedzialny jest za prezentację - określa w jaki sposób informacje mają zostać przedstawione. Kontroler przyjmuje żądania i wykonuje związane z nimi akcje. Głównie aktualizuje widoki oraz modele.
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[width=0.6\textwidth]{02/MVC_diagram}
+	\end{center}
+	\caption{Wzorzec projektowy MVC}
+	\vspace{-0.3cm}
+\end{figure}
+
+Wzorzec MVC jest stosowany w Django, jednak został zrealizowany w sposób odmienny od najczęściej spotykanych jego implementacji. Z tego względu często nazywa się go wzorcem MTV (Model-Template-View), będącego pewną wariacją MVC. Także wyróżnia się w nim trzy główne części aplikacji, a są to:
+\begin{itemize}
+	\item Model -- podobnie jak w MVC, zapewnia dostęp do danych. Opisane są tutaj relacje między danymi oraz odbywa się ich walidacja.
+	\item Template (pol. szablon) -- warstwa prezentacji, czyli jak ma zostać wygenerowana odpowiedź (w postaci dokumentu HTML lub innym formacie).
+	\item View (pol. widok) -- zawiera logikę biznesową. Pobiera dane z modeli i łączy je z szablonami, tworząc w ten sposób odpowiedź. Stanowi pomost między dwoma wcześniej wymienionymi elementami MTV.
+\end{itemize}
+Rolę kontrolera MVC pełni w Django sam framework. Otrzymane zapytanie wysyłane jest do odpowiedniego widoku, w zależności od konfiguracji URL.
+\begin{singlespace}
+	\captionof{listing}{Przykładowa konfiguracja URL w Django}
+	\vspace{0.3cm}
+	\inputminted[fontsize=\footnotesize]{python}{src/urls.py}
+	\label{l:url}
+\end{singlespace}
+
+% tutaj o wszystkich cechach Django
+W przeciwieństwie do mikro frameworków, takich jak Flask, Django dostarcza programiście wielu gotowych rozwiązań, jak: dostęp do baz danych, klasy ORM, obsługa linków URL, uprawnienia użytkowników, automatycznie generowana strona administratora, szablony HTML i wiele innych. Dodatkowo posiada wbudowaną ochronę przed typowymi atakami, takimi jak: cross-site scripting (XSS), cross-site request forgery (CSRF), a także wstrzykiwanie SQL'a.
+
+\subsubsection*{Programowanie aplikacji}
+Tak jak większość frameworków, także i Django tworzy za użytkownika gotową strukturę projektu. Poza konfiguracją, nie znajduje się w nim jednak żadna logika. Wszystkie modele oraz widoki w danym projekcie tworzone są w ramach tzw. aplikacji, czyli pakietów Pythona (których struktura także generowana jest przez framework), odpowiednio w plikach models.py oraz views.py. Dzięki temu mogą zostać one ponownie wykorzystane. W hierarchii plików znajdują się na tym samym poziomie, co projekt. 
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[width=0.15\textwidth]{02/django_structuree}
+	\end{center}
+	\caption{Struktura plików projektu (ParQ) z aplikacją (badges)}
+	\vspace{-0.3cm}
+\end{figure}
+
+W pliku settings.py projektu znajdują się wszystkie ustawienia serwisu, takie jak konfiguracja bazy danych, strefy czasowej, silnika szablonów oraz pakietów pośredniczących (middleware) wykorzystywanych np.: do autoryzacji. Tam także powinny zostać zarejestrowane wszystkie aplikacje używane w projekcie.
+
+W models.py aplikacji znajdują się modele danych - są to klasy dziedziczące po Model. Posiadają zmienne klasowe, które reprezentują kolumny w tabelach baz danych. Nazwa takiego pola jest później używana jako nazwa kolumny, natomiast jej typ definiowany jest przez instancję jednej z klas pochodnych od Field. I tak dla przykładu IntegerField będzie typem całkowitoliczbowym, a CharField znakowym. Parametry podane w konstruktorze pozwalają zdefiniować rozmiar, czy unikalność krotki w kolumnie. Relacje również tworzone są za pomocą pól. Model posiadający pole relacji, może odwoływać się za jego pomocą do powiązanych danych. W Django znajdują się trzy takie klasy:
+\begin{itemize}
+	\item ForeignKey -- pole z kluczem obcym, używane w relacjach jeden do wielu. Tworzona jest kolumna w tabeli.
+	\item ManyToManyField -- używane w relacjach wiele do wielu. W bazie danych zostanie automatycznie utworzona tabela pośrednia, z kluczami powiązanych tabel.
+	\item OneToOneField -- do relacji jeden do jeden. Także wykorzystywana jest tabela pośrednia, jednakże oba klucze są unikalne - mogą wystąpić tylko w jednej relacji w ramach tej tabeli.
+\end{itemize}
+
+W modelach dozwolone jest także definiowanie własnych metod.
+
+\begin{singlespace}
+	\captionof{listing}{Przykładowy model danych z modułu models.py}
+	\vspace{0.3cm}
+	\inputminted[fontsize=\footnotesize]{python}{src/models.py}
+\end{singlespace}
+
+Kolejnym ważnym plikiem w aplikacji tworzonej przez użytkownika jest views.py. To tutaj znajdują się widoki ze wzorca MTV i scalają one szablony z modelami. Jako parametr przyjmują obiekt HttpRequest, zawierający dane zawarte w żądaniu HTTP. To właśnie te widoki podawane są podczas konfiguracji linków w funkcji url, pliku urls.py w projekcie. Zostało to zaprezentowane na listingu \ref{l:url}.
+
+\begin{singlespace}
+	\captionof{listing}{Widok}
+	\vspace{0.3cm}
+	\inputminted[fontsize=\footnotesize]{python}{src/views.py}
+\end{singlespace}
+
+\subsubsection*{Aplikacje jako dodatki}
+Napisane aplikacje Django, mogą być wielokrotnie wykorzystywane w innych projektach. Na tej zasadzie funkcjonują dodatki pisane do tego frameworku. Jednymi z nich są: Django REST Framework używany do tworzenia API w architekturze REST, czy django-annoying modyfikujący działanie niektórych elementów silnika.
+
+%\begin{listing}[H]
+%	\caption{Kod powyżej}
+%	\vspace{0.5cm}
+%	\inputminted[fontsize=\footnotesize]{python}{src/models.py}
+%\end{listing}

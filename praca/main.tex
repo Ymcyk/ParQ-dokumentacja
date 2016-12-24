@@ -4,6 +4,8 @@
 %\usepackage[polish]{babel}
 \usepackage{polski}
 \usepackage[utf8]{inputenc}
+\usepackage{caption}
+\usepackage[newfloat]{minted}
 \usepackage{lmodern}
 % pakiet dodaje wcięcie do pierwszego paragrafu po
 % tytule. Domyślnie pierwszy nie ma wcięcia.
@@ -24,13 +26,15 @@
 \usepackage{array}
 \usepackage{multirow}
 \usepackage{wrapfig}
-\usepackage{listings}
+% \usepackage{listings}
 \usepackage{chngcntr}
 \setcounter{secnumdepth}{3}
 \graphicspath{{images/}}
 
 \renewcommand*{\figurename}{Rys.}
 \renewcommand*{\tablename}{Tab.}
+% \renewcommand*{\listingname}{Kod.}
+\renewcommand{\thelisting}{\arabic{section}.\arabic{listing}}
 \renewcommand{\thetable}{\arabic{section}.\arabic{table}}
 \renewcommand{\thefigure}{\arabic{section}.\arabic{figure}}
 
