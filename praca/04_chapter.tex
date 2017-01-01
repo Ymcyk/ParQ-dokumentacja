@@ -1,6 +1,368 @@
+\setcounter{listing}{0}
+
 \section{Projekt systemu}
-\subsection{Schemat działania systemu}
-\subsection{Wymagania funkcjonalne}
-\subsection{Wymagania niefunkcjonalne}
+W tym rozdziale zawarta została dokumentacja techniczna systemu strefy parkowania. Na samym początku przedstawiony jest schemat, opisujący sposób jego działania. W dalszej części opisana została specyfikacja wymagań, z definicją systemu oraz wymaganiami funkcjonalnymi i niefunkcjonalnymi. Pozostała część rozdziału została poświęcona diagramom UML i opisowi API, wykorzystywanego do komunikacji serwera z aplikacją mobilną. 
+
+\subsection{Schemat działania systemu ParQ}
+
+Stworzony w ramach tej pracy system płatności w strefie płatnego parkowania, nazwany ParQ, umożliwia dokonanie zakupu biletu postojowego, oraz jego późniejszą kontrolę. Obie te czynności wykonywane są w oparciu o generowany dla każdego pojazdu, unikalny kod UUID. To właśnie on znajduje się na plakietkach z kodem QR. Po jego zeskanowaniu, kontroler uzyska informacje o danym pojeździe.
+
+Cała funkcjonalność systemu dostępna jest dla jego użytkowników za pośrednictwem aplikacji na urządzeniach mobilnych. Wykonane one zostały w formie tzw.~``cienkiego klienta'', co oznacza, że nie są przeprowadzane na nich żadne skomplikowane operacje. Komunikują się z serwerem wysyłając do niego żądania, a użytkownikowi prezentowana jest odebrana odpowiedź. Do skorzystania z systemu niezbędne jest posiadanie wcześniej założonego konta.
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[width=0.7\linewidth]{04/schemat}
+	\end{center}
+	\caption{Schemat działania systemu}
+\end{figure}
+
+Z każdym kontem kierowcy w systemie powiązana jest jego wirtualna portmonetka. Są to elektroniczne pieniądze (w postaci krotki z ilością pieniędzy w bazie danych), jakimi dokonywać będzie on opłat za bilety postojowe. Po zarejestrowaniu użytkownik musi doładować swoje konto. Wykonuje to także za pośrednictwem aplikacji mobilnej, z wykorzystaniem bramki płatności, a wielkość doładowania zależy od kwoty, jaka została wpłacona. Po tej operacji, a także zarejestrowaniu swojego pojazdu w systemie, możliwy staje się zakup biletu postojowego.
+
+Transakcja związana z dodaniem środków na konto w systemie odbywa się z wykorzystaniem usług PayPal'a, który udostępnia na Androida specjalną bibliotekę. To ona odpowiedzialna jest za komunikację z serwerami tego usługodawcy płatności. Kierowcy, po podaniu kwoty jaką chce zasilić konto, prezentowany jest ekran (także udostępniany w ramach tej biblioteki), gdzie dokonywany jest wybór metody płatności i autoryzacja. Po tych krokach, a także transakcji przeprowadzonej z sukcesem, zwrócony zostaje identyfikator płatności. Ten unikalny ciąg znaków aplikacja wysyła już do serwera systemu ParQ. On, komunikując się z PayPal'em, uzyskuje informacje o kwocie, jak została wpłacona. Po otrzymaniu odpowiedzi, konto kierowcy zostaje zasilone. Co istotne, identyfikator transakcji zapisywany jest w bazie danych, dzięki czemu ta sama wpłata nie zostanie naliczona więcej niż jeden raz.
+
+Osoba przeprowadzająca kontrolę potrzebuje do swojej pracy urządzenia mobilnego ze sprawnym aparatem. Sprawdzenie ważności biletu odbywa się poprzez zeskanowanie plakietki z kodem identyfikacyjnym pojazdu. Odpowiedź zwrócona przez serwer zawiera informacje o danym pojeździe, a także o braku lub posiadaniu przypisanego biletu postojowego.
+
+\subsubsection*{Moduły}
+
+Aplikacja internetowa został podzielona na pięć modułów:
+
+\begin{itemize}
+	\item badges -- klasy pojazdu i kodu identyfikacyjnego. W tym miejscu generowany jest także kod QR. 
+	\item charges -- tworzenie taryfikatora oraz grafiku. Tutaj zostaje naliczona opłata.
+	\item parkings -- klasa parkingu oraz biletu.
+	\item paypal -- komunikacja z PayPal'em. W tym miejscu zostaje zapisany numer identyfikacyjny transakcji.
+	\item users -- klasy kierowcy oraz kontrolera.
+\end{itemize}
+
+Aplikacje mobilne zawierają klasy aktywności, które są powiązane z klasami obsługującymi komunikację z serwerem.
+
+\subsection{Specyfikacja wymagań}
+
+\subsubsection*{Definicja systemu}
+
+System przeznaczony jest dla miejskich stref płatnego parkowania, które chcą wykorzystać w swojej pracy urządzenia mobilne. Klienci zyskują możliwość bardziej elastycznego dokonywania opłat. Kontrolerzy, dzięki zastosowaniu kodów graficznych QR, mogą znacznie szybciej przeprowadzać kontrolę postoju pojazdu. Wystarczy zeskanowanie aparatem urządzenia mobilnego plakietki z kodem identyfikacyjnym. 
+
+\subsubsection*{Technologie}
+
+Aplikacja internetowa została napisana w języku Python 3, z wykorzystaniem frameworku Django 1.10. Część mobilna wykonana jest w systemie Android i języku Java. Do realizacji zadań konieczne było wykorzystanie zewnętrznych bibliotek oraz rozszerzeń.
+
+\subsubsection*{Wymagania funkcjonalne}
+
+Wymagania funkcjonalne stanowią zbiór wszystkich funkcjonalności, udostępnianych przez system. Dotyczą one zarówno aplikacji mobilnej, jak i serwerowej. Wszelka interakcja kierowcy oraz kontrolera z systemem, odbywa się jedynie za pośrednictwem aplikacji mobilnej.
+
+\begin{enumerate}
+	\item Zarządzanie kontem użytkownika
+		\begin{itemize}
+			\item System posiada dwie role użytkowników, którzy mogą się zalogować w aplikacji mobilnej: kierowcę oraz kontrolera.
+			\item Kierowca może się zarejestrować w systemie.
+			\item Kierowca może zalogować się do systemu.
+			\item Podczas zakładania konta kierowcy, wymagane są: nazwa użytkownika, e-mail oraz hasło.
+			\item Nazwa użytkownika jest unikalna w całym systemie, niezależnie od jego roli.
+			\item Kierowca może przeglądać informacje podane podczas rejestracji.
+			\item Konto kontrolera tworzone jest przez administratora.
+		\end{itemize}
+	\item Zarządzanie pojazdami
+		\begin{itemize}
+			\item Kierowca może zarejestrować swoje pojazdy w systemie.
+			\item Kierowca podczas rejestracji pojazdu musi podać nazwę, kraj i numer rejestracji.
+			\item Kierowca może usunąć pojazd przypisany do swojego konta.
+			\item Kierowca może przeglądać wszystkie dodane przez siebie pojazdy.
+			\item Kierowca po zarejestrowaniu pojazdu otrzymuje na maila wiadomość z kodem QR, używanego do identyfikacji pojazdu.
+			\item Pojazd może być dodawany jedynie przez użytkownika, który ma przypisaną rolę kierowcy.
+		\end{itemize}
+	\item Zakup biletu postojowego
+		\begin{itemize}
+			\item Kierowca kupując bilet, określa datę początkową, końcową, oraz parking w jakim chce dany bilet kupić.
+			\item Kierowca może zakupić bilet, jeżeli posiada środki w wirtualnej portmonetce oraz przynajmniej jeden zarejestrowany pojazd w systemie.
+			\item Kierowca może kupić bilet jedynie dla pojazdu przypisanego do jego konta.
+			\item Kierowca nie może zakupić biletu, jeżeli nie posiada wystarczającej ilości środków.
+			\item Bilet może obowiązywać tylko na jeden taryfikator.
+			\item Bilet nie może zostać kupiony, jeżeli nie obowiązuje żaden taryfikator.
+			\item Środki z wirtualnej portmonetki kierowcy są 
+			\item Zakupu biletu postojowego może dokonać jedynie użytkownik, który ma przypisaną rolę kierowcy.
+		\end{itemize}
+	\item Płatności
+		\begin{itemize}
+			\item W systemie jedynie kierowca posiada wirtualną portmonetkę.
+			\item Kierowca ma wgląd w stan konta wirtualnej portmonetki.
+			\item Aplikacja dla kierowcy jest zintegrowana z bramką płatności.
+			\item Kierowca może dokonać płatności w aplikacji mobilnej, celem doładowania konta.
+		\end{itemize}
+	\item Kontrola biletu postojowego
+		\begin{itemize}
+			\item Kontrolę biletu może przeprowadzać jedynie zalogowany użytkownik, który ma przypisaną rolę kontrolera.
+			\item Kontrola odbywa się poprzez zeskanowanie kodu QR z identyfikatorem pojazdu.
+			\item Kontroler po zeskanowaniu otrzymuje informacje o numerze rejestracyjnym pojazdu, celem sprawdzenia, czy dany identyfikator jest faktycznie przypisany do kontrolowanego pojazdu.
+			\item Kontroler otrzymuje informację o legalności postoju -- czy bilet został zakupiony i czy jest ważny oraz na jaki parking został zakupiony.
+		\end{itemize}
+	\item Zarządzanie parkingami
+		\begin{itemize}
+			\item System pozwala na dodawanie i usuwanie parkingów.
+			\item System pozwala na przeglądanie dodanych pojazdów.
+			\item System pozwala na tworzenie i usuwanie taryfikatorów opłat.
+			\item System pozwala na przeglądanie istniejących taryfikatorów.
+			\item System pozwala na określenie czasu, w jakim dany taryfikator będzie obowiązywał.
+			\item System pozwala na przypisanie taryfikatora do parkingu.
+		\end{itemize}
+\end{enumerate}
+
+\subsubsection*{Wymagania niefunkcjonalne}
+
+\begin{itemize}
+	\item Odpowiedź z serwera powinna być wysłana w czasie nie dłuższym niż 5 sekund.
+	\item Aplikacja mobilna powinna działać na systemie Android, wersja 4.1 (API 16) i wyższych.
+	\item Aplikacja mobilna powinna posiadać prosty interfejs graficzny.
+	\item Zakup biletu w aplikacji mobilnej powinien trwać nie dłużej niż 5 sekund.
+	\item Uzupełnienie konta w systemie możliwe jest z wykorzystaniem kart płatniczych.
+	\item System powinien być w stanie obsłużyć przynajmniej 400 tyś. użytkowników.
+\end{itemize}
+
+% \subsection{Interfejs graficzny aplikacji mobilnych}
+
+\newpage
 \subsection{Diagramy UML}
-\subsection{Projekt bazy danych}
+
+%\subsubsection*{Diagramy przypadków użycia}
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[width=1.0\linewidth]{04/use_case-kierowca_platnosc_bilety}
+	\end{center}
+	\caption{Przypadki użycia dla kierowcy}
+\end{figure}
+
+\begin{figure}[p]
+	\begin{center}
+		\includegraphics[width=1.03\linewidth]{04/use_case_rest}
+	\end{center}
+	\caption{Przypadki użycia dla kontrolera, pracownika i administratora}
+\end{figure}
+
+% \newpage
+
+% \subsubsection*{Diagram pakietów}
+
+% \vspace{1.5cm}
+
+\begin{figure}[p]
+	\begin{center}
+		\includegraphics[width=0.99\linewidth]{04/packages}
+	\end{center}
+	\caption{Diagram pakietów}
+\end{figure}
+
+%\newpage
+
+%\subsubsection*{Diagramy klas}
+
+%\vspace{1.5cm}
+
+\begin{figure}[p]
+	\begin{center}
+		\includegraphics[width=1.0\linewidth]{04/ParQ_class_users}
+	\end{center}
+	\caption{Diagram klas dla pakietów paypal, users, badges oraz powiązanych}
+\end{figure}
+
+
+\begin{figure}[p]
+	\begin{center}
+		\includegraphics[width=0.99\linewidth]{04/ParQ_class_charges_parkings}
+	\end{center}
+	\caption{Diagram klas dla pakietów parkings, charges oraz powiązanych}
+\end{figure}
+
+%\newpage
+
+%\subsubsection*{Diagramy sekwencji}
+
+\begin{figure}[p]
+	\begin{center}
+		\includegraphics[width=0.88\linewidth]{04/activity_charge}
+	\end{center}
+	\caption{Diagram aktywności doładowywania portmonetki}
+\end{figure}
+
+\begin{figure}[p]
+	\begin{center}
+		\includegraphics[width=0.88\linewidth]{04/activity_ticket_controlling}
+	\end{center}
+	\caption{Diagram aktywności kontrolowania biletu}
+\end{figure}
+
+\begin{figure}[p]
+	\begin{center}
+		\includegraphics[width=0.75\linewidth]{04/zaplata_za_ticket_sequence}
+	\end{center}
+	\caption{Diagram sekwencji zakupu biletu postojowego}
+\end{figure}
+
+\begin{figure}[p]
+	\begin{center}
+		\includegraphics[width=0.9\linewidth]{04/vehicle_adding_sequence}
+	\end{center}
+	\caption{Diagram sekwencji dodawania nowego pojazdu}
+\end{figure}
+
+\begin{figure}[p]
+	\begin{center}
+		\includegraphics[width=0.9\linewidth]{04/parking_create}
+	\end{center}
+	\caption{Diagram sekwencji dodawania nowego parkingu oraz opłat}
+\end{figure}
+
+\newpage
+
+% \subsubsection*{Diagramy aktywności}
+
+% \subsection{Projekt bazy danych}
+
+\subsection{Opis REST API}
+
+Autoryzacja użytkowników w systemie opera się na tokenie, generowanym podczas zakładania konta. Jest on niezbędny do komunikacji serwera z aplikacją mobilną, która uzyskuje go podczas logowania. Dołączany jest on później do nagłówka każdego żądania (oprócz rejestracji oraz logowania).
+
+\captionof{listing}{Dane umieszczane w nagłówkach żądań}
+\vspace{-0.3cm}
+\begin{table}[h]
+	\begin{center}
+		\begin{tabular}{ rl }
+			Content-Type:&application/json/\\
+			Authorization:&Token 84f41d74832b9a7c95e8120ca856f1f29cdaa7cf\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+Poniżej znajdują się żądania wysyłane przez aplikację mobilną oraz odpowiedzi, jakie otrzyma w przypadku poprawnych zapytań.
+
+% \subsubsection*{Logowanie}
+
+\vspace{0.5cm}
+\captionof{table}{API systemu do komunikacji aplikacji mobilnej z serwerem}
+\begin{longtable}{p{3.5cm}  p{11cm}}
+	
+	Opis:&Logowanie kierowcy do systemu\\
+	URL:&/login/\\
+	Metoda HTTP:&POST\\
+	Ciało zapytania:&username=nazwa\&password=hasło\&role=driver\\
+	Ciało odpowiedzi:&\{"token":"c6f42c7cff7ae417323b4b12dbad0964f70dd6f5"\}\\
+	
+	&\\
+	
+	Opis:&Logowanie kontrolera do systemu\\
+	URL:&/login/\\
+	Metoda HTTP:&POST\\
+	Ciało zapytania:&username=nazwa\&password=hasło\&role=officer\\
+	Ciało odpowiedzi:&\{"token":"c6f42c7cff7ae417323b4b12dbad0964f70dd6f5"\}\\
+	
+	&\\
+	
+	Opis:&Zakładanie konta przez kierowcę\\
+	URL:&/register/\\
+	Metoda HTTP:&POST\\
+	Ciało zapytania:&\{\newline
+	\-\hspace{1cm}"username":"kierowca",\newline
+	\-\hspace{1cm}"email":"kierowca@wp.pl"\newline
+	\}\\
+	Ciało odpowiedzi:&\{\newline
+	\-\hspace{1cm}"id":7,\newline
+	\-\hspace{1cm}"username":"kierowca",\newline
+	\-\hspace{1cm}"email":"kierowca@wp.pl"\newline
+	\}\\
+	
+	&\\
+	
+	Opis:&Pobranie informacji o użytkowniku\\
+	URL:&/current/\\
+	Metoda HTTP:&GET\\
+	Ciało odpowiedzi:&\{\newline
+	\-\hspace{1cm}"id":7,\newline
+	\-\hspace{1cm}"username":"kierowca",\newline
+	\-\hspace{1cm}"email":"kierowca@wp.pl"\newline
+	\}\\
+	
+	&\\
+	
+	Opis:&Pobranie pojazdów użytkownika\\
+	URL:&/vehicles/\\
+	Metoda HTTP:&GET\\
+	Ciało odpowiedzi:&[\{\newline
+	\-\hspace{1cm}"id":3,\newline
+	\-\hspace{1cm}"owner":9,\newline
+	\-\hspace{1cm}"badge":"8a925556-d686-43bb-8e10-b165c642d77b",\newline
+	\-\hspace{1cm}"name":"Matiz",\newline
+	\-\hspace{1cm}"plate\_country":"PL",\newline
+	\-\hspace{1cm}"plate\_number":"ZS11111"\newline
+	\}]\\
+	
+	&\\
+	
+	Opis:&Stworzenie pojazdu\\
+	URL:&/vehicles/\\
+	Metoda HTTP:&POST\\
+	Ciało zapytania:&\{\newline
+	\-\hspace{1cm}"name":"Matiz",\newline
+	\-\hspace{1cm}"plate\_country":"PL",\newline
+	\-\hspace{1cm}"plate\_number":"ZS11111"\newline
+	\}\\
+	Ciało odpowiedzi:&\{\newline
+	\-\hspace{1cm}"id":3,\newline
+	\-\hspace{1cm}"owner":9,\newline
+	\-\hspace{1cm}"badge":"8a925556-d686-43bb-8e10-b165c642d77b",\newline
+	\-\hspace{1cm}"name":"Matiz",\newline
+	\-\hspace{1cm}"plate\_country":"PL",\newline
+	\-\hspace{1cm}"plate\_number":"ZS11111"\newline
+	\}\\
+	
+	&\\
+	
+	Opis:&Usunięcie pojazdu\\
+	URL:&/vehicles/\{id\}\\
+	Metoda HTTP:&DELETE\\
+	
+	&\\
+	
+	Opis:&Pobranie listy parkingów\\
+	URL:&/parkings/\\
+	Metoda HTTP:&GET\\
+	Ciało odpowiedzi:&[\{\newline
+	\-\hspace{1cm}"id":1,\newline
+	\-\hspace{1cm}"name":"Strefa A",\newline
+	\-\hspace{1cm}"description":"opis"\newline
+	\}]\\
+	
+	&\\
+	
+	Opis:&Utworzenie biletu przez kierowcę\\
+	URL:&/tickets/\\
+	Metoda HTTP:&POST\\
+	Ciało zapytania:&\{\newline
+	\-\hspace{1cm}"start":"2017-01-02T07:00:00Z",\newline
+	\-\hspace{1cm}"end":"2017-01-02T08:00:00Z",\newline
+	\-\hspace{1cm}"vehicle":1\newline
+	\-\hspace{1cm}"parking":1\newline
+	\}\\
+	
+	&\\
+	
+	Opis:&Otrzymanie informacji o zaparkowanym pojeździe przez kontrolera\\
+	URL:&/tickets/?badge=18a131b1-7ff0-412b-8d6a-65b30c8e3ede\\
+	Metoda HTTP:&GET\\
+	Ciało odpowiedzi:&[\{\\
+	&\-\hspace{1cm}"start":"2017-01-02T07:00:00Z",\\
+	&\-\hspace{1cm}"end":"2017-01-02T08:00:00Z",\\
+	&\-\hspace{1cm}"vehicle":\{\\
+	&\-\hspace{2cm}"id":1,"owner":1,\\
+	&\-\hspace{2cm}"badge":"18a131b1-7ff0-412b-8d6a-65b30c8e3ede",\\
+	&\-\hspace{2cm}"name":"Golf",\\
+	&\-\hspace{2cm}"plate\_country":"PL",\\
+	&\-\hspace{2cm}"plate\_number":"ZS11111"\\
+	&\},\\
+	&\-\hspace{1cm}"parking":\{\\
+	&\-\hspace{2cm}"id":1,\\
+	&\-\hspace{2cm}"name":"Strefa A",\\
+	&\-\hspace{2cm}"description":""\\
+	&\-\hspace{2cm}\},\\
+	&\-\hspace{1cm}"price":"1.00"\\
+	&\}]\\
+%TODO Pobieranie grafiku i taryfikatora
+\end{longtable}

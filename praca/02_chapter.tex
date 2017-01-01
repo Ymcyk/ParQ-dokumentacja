@@ -1,5 +1,5 @@
 \section{Opis wykorzystanych technologii}
-Realizacja celu pracy wymagała wykorzystania wielu różnych technologii. Zarówno do realizacji aplikacji mobilnej, jak i serwerowej, konieczne było wybranie konkretnych metod. W tym rozdziale zostały one przedstawione oraz szczegółowo omówione.
+W tym rozdziale znajdują się informacje o najważniejszych technologiach, wykorzystanych podczas realizacji zadań pracy. W kolejnych podrozdziałach opisane zostały kody graficzne QR, system mobilny Android oraz framework aplikacji serwerowych - Django. 
 
 \subsection{Kody graficzne QR}
 Przedstawianie danych w postaci kodów graficznych nie jest niczym innowacyjnym - w sklepach towary oznaczane są za pomocą jednowymiarowego kodu kreskowego. Kombinacja jasnych oraz ciemnych linii umożliwia przechowywanie danych, które odczytywane są za pomocą skanera z laserem. Tego typu metody stosuje się głównie w celach identyfikacji. Do przechowywania większej ilości danych wykorzystuje się częściej tzw. kody 2D.
@@ -22,6 +22,7 @@ Przed zakodowaniem informacji do postaci kodu QR, należy określić trzy głów
 Najważniejszym parametrem, wpływającym bezpośrednio na ilość danych jakie kod będzie w stanie przechować, to jego wersja. Numerowana jest od 1 do 40 i każda z nich ma przypisany do siebie rozmiar. Wersja pierwsza posiada 21 na 21 modułów, druga 24 na 24, a ostatnia, czyli czterdziesta - 177 na 177. Każda kolejna jest większa od poprzedniej o trzy moduły na bok. Oczywiście im numer wersji, czyli też rozmiar, jest większy, tym więcej danych będzie można zakodować. 
 
 Równie ważne jak wybór wersji jest określenie typu danych, jaki ma być zakodowany. Informacja o typie zapisywana jest w kodzie QR, dzięki czemu podczas odczytywania czytnik wie jak ma interpretować dane. Dodatkowo, ta informacja decyduje też o maksymalnej pojemności. Typ numeryczny przechowuje informacje jedynie o liczbach, dlatego będzie potrzebował mniej bitów na znak, niż w przypadku danych alfanumerycznych. Dostępne są cztery typy:
+
 \begin{itemize}
 	\item Numeryczny -- ten tryb pozwala na zakodowanie tylko cyfr od 0 do 9, co umożliwia maksymalnie na przechowywanie 7089 znaków.
 	\item Alfanumeryczny -- oprócz cyfr, także wielkie litery oraz znaki '\$', '\%', '*', '+', '-', '.', '/', ':' i spacja. Można zakodować do 4296 znaków. 
@@ -30,6 +31,7 @@ Równie ważne jak wybór wersji jest określenie typu danych, jaki ma być zak
 \end{itemize}
 
 Poziom korekcji błędów służy do określenia, czy dane zostały odczytane poprawnie. Pozwala także na odzyskanie części z nich, nawet jeśli kod został uszkodzony (dzięki algorytmowi Reeda-Solomona). Specyfikacja wyróżnia cztery poziomy korekcji. Obok każdego z nich podany został procent danych, jakie można odzyskać:
+
 \begin{itemize}
 	\item L (Low) - 7\% danych,
 	\item M (Medium) - 15\% danych,
@@ -85,16 +87,19 @@ Android to mobilna platforma systemowa, stworzona w 2003~r, a następnie wykupio
 
 \subsubsection*{Architektura systemu}
 Ze względu na architekturę systemu, można wyróżnić w Androidzie kilka abstrakcyjnych warstw: aplikacji, frameworku aplikacji, bibliotek, środowiska wykonawczego i jądra Linux, na którym bazuje cały system. Cała funkcjonalność systemu, niezbędna podczas działania aplikacji, dostępna jest poprzez framework aplikacji, czyli systemowe API napisane w Javie. Używając go, programista może kontrolować sposób działania oraz wygląd programu. Tutaj znajduje się menedżer aktywności (ang. Activity Manager), odpowiedzialny za cykl życia aplikacji, czy menedżer powiadomień (ang. Notification Manager) obsługujący wyświetlanie wszelkich notyfikacji. Także udostępnianie przez aplikacje interfejsów, z wykorzystaniem intencji, możliwe jest dzięki tej warstwie. Poniżej jej znajdują się natywne biblioteki, napisane w C i C++. Dzięki systemowemu API najczęściej nie ma konieczności z nich korzystać, i do tworzenia aplikacji można używać Javy. Najgłębiej w systemie znajduje się jego jądro, czyli Linux. Wykonuje ono najbardziej podstawowe funkcje, będąc odpowiedzialnym m.in. za zarządzanie baterią. Posiada też sterowniki systemowe: ekranu, aparatu, czy audio.
+
 \begin{figure}[h]
 	\begin{center}
 		\includegraphics[width=0.5\linewidth]{02/warstwy_android}
 	\end{center}
 	\caption{Schemat architektury systemu Android}
 \end{figure}
+
 \subsubsection*{Środowisko wykonawcze}
 Uruchamianiem programów napisanych w Javie zajmuje się wirtualna maszyna Javy (ang. Java Virtual Machine). Po skompilowaniu tworzony jest kod bajtowy, plik \textit{class}, który następnie po załadowaniu interpretowany jest przez JVM (możliwa też kompilacja JIT). Takie podejście pozwala na przenośność programów, czyli niezależność od platformy, kosztem pewnego spadku wydajności.
 
 Mimo, że programy na Androida pisane są w Javie, to nie JVM używany jest do ich późniejszego wykonywana. Głównie jest to spowodowane chęcią stworzenia środowiska uruchomieniowego, które będzie lepiej przystosowane do słabszych wydajnościowo od komputerów maszyn, jakimi są urządzenia mobilne. Proces budowania aplikacji rozpoczyna się tak samo. Kompilator przekształca pliki zawierające kod Javy, do kodu bajtowego. W takiej postaci program nie mógłby zostać jeszcze uruchomiony. Najpierw specjalne narzędzie, pod nazwą \textit{dx}, modyfikuje wynik działania kompilatora. Dla każdej klasy Javy tworzony jest osobny plik \textit{class} - w trakcie działania programu są one ładowne przez JVM. Zadaniem \textit{dx} jest połączenie wszystkich tych kodów bajtowych w jeden plik \textit{dex}, z usunięciem powtarzających się symboli oraz zmianą znajdujących się tam instrukcji, na odpowiednie dla Androida. Dzięki temu skompilowany program będzie mniejszy oraz powinien działać szybciej. Ostatnim etapem budowania aplikacji jest stworzenie pliku \textit{apk}, odpowiednika \textit{jar}, w którym oprócz kodu bajtowego, znajdą się takie zasoby jak zdjęcia wykorzystywane w aplikacji.
+
 \begin{figure}[h]
 	\begin{center}
 		\includegraphics[width=0.5\textwidth]{02/android_dex}
@@ -110,10 +115,12 @@ W wersji 5.0 Androida (Lolipop) zastąpiono dotychczasową maszynę wirtualną D
 
 \subsubsection*{Programowanie aplikacji}
 Aby móc tworzyć aplikacje na Androida z wykorzystaniem Javy, konieczne jest posiadanie:
+
 \begin{itemize}
 	\item Java z JDK i JRE,
 	\item Android SDK.
 \end{itemize}
+
 W ten sposób aplikacja do funkcji systemowych odwoływać się będzie za pomocą udostępnionego przez system API, przeznaczonego dla Javy. Dzięki temu, że nie jest to kod natywny, nie jest konieczna osobna kompilacja dla każdej dostępnej architektury. Programy są uniwersalne i dopiero po zainstalowaniu na konkretnym urządzeniu, interpretowany jest kod bajtowy, bądź przeprowadzana kompilacja AOT. Przez twórców systemu udostępniane jest NDK, czyli Native Development Kit. Z jego pomocą aplikacje mogą być tworzone w C lub C++, odwołując się bezpośrednio do bibliotek systemowych. Niestety, mimo możliwego zysku na wydajności, stworzony kod jest zależny od architektury. Dodatkowo większość zewnętrznych bibliotek jest tworzonych w Javie. 
 
 Bardzo zalecane jest używanie zintegrowanego środowiska programistycznego, które automatyzuje niektóre czynności. Potrafi stworzyć za użytkownika projekt z wymaganą strukturą plików, wykonać wszystkie etapy kompilacji, wgrać program na urządzenie i wiele innych. Dedykowanym IDE jest Android Studio, do niedawna wykorzystywany był domyślnie Eclipse.
@@ -125,6 +132,7 @@ Bardzo zalecane jest używanie zintegrowanego środowiska programistycznego, kt�
 	\caption{Pliki projektu utworzonego w Android Studio}
 	\vspace{-0.3cm}
 \end{figure}
+
 Podczas działania aplikacja prezentuje użytkownikowi tzw. ekrany. Są to odpowiedniki okien systemowych, gdzie umieszczane są elementy graficznego interfejsu użytkownika, czyli widoki (ang. views), jak np.: przyciski, rozwijane listy, czy pola tekstowe. Wchodząc z nimi w interakcję (poprzez dotyk, w ekranach dotykowych), możliwa jest komunikacja między użytkownikiem, a urządzeniem. 
 
 Wygląd ekranów definiowany jest w plikach XML, nazywanych układami (ang. layout). Każdy z widoków jest osobnym znacznikiem, a za pomocą argumentów można modyfikować wybrane parametry jak rozmiar, czy kolor. Wszystkie widoki w pliku XML muszą posiadać swojego rodzica, który definiuje jak mają one być traktowane w tym układzie. W Androidzie można skorzystać z trzech. RelativeLayout - położenie widoków określane jest względem siebie. LinearLayout - układ liniowy, gdzie elementy GUI wyświetlane są jeden koło drugiego. GridLayout - dzieli ekran na siatkę, składającą się z wierszy oraz kolumn, i pozwala umieścić widoki we wskazanych komórkach.
@@ -167,6 +175,7 @@ Wzorzec MVC jest stosowany w Django, jednak został zrealizowany w sposób odmie
 	\item View (pol. widok) -- zawiera logikę biznesową. Pobiera dane z modeli i łączy je z szablonami, tworząc w ten sposób odpowiedź. Stanowi pomost między dwoma wcześniej wymienionymi elementami MTV.
 \end{itemize}
 Rolę kontrolera MVC pełni w Django sam framework. Otrzymane zapytanie wysyłane jest do odpowiedniego widoku, w zależności od konfiguracji URL.
+
 \begin{singlespace}
 	\captionof{listing}{Przykładowa konfiguracja URL w Django}
 	\vspace{0.3cm}
@@ -179,6 +188,7 @@ W przeciwieństwie do mikro frameworków, takich jak Flask, Django dostarcza pro
 
 \subsubsection*{Programowanie aplikacji}
 Tak jak większość frameworków, także i Django tworzy za użytkownika gotową strukturę projektu. Poza konfiguracją, nie znajduje się w nim jednak żadna logika. Wszystkie modele oraz widoki w danym projekcie tworzone są w ramach tzw. aplikacji, czyli pakietów Pythona (których struktura także generowana jest przez framework), odpowiednio w plikach models.py oraz views.py. Dzięki temu mogą zostać one ponownie wykorzystane. W hierarchii plików znajdują się na tym samym poziomie, co projekt. 
+
 \begin{figure}[h]
 	\begin{center}
 		\includegraphics[width=0.15\textwidth]{02/django_structuree}
@@ -190,6 +200,7 @@ Tak jak większość frameworków, także i Django tworzy za użytkownika gotow�
 W pliku settings.py projektu znajdują się wszystkie ustawienia serwisu, takie jak konfiguracja bazy danych, strefy czasowej, silnika szablonów oraz pakietów pośredniczących (middleware) wykorzystywanych np.: do autoryzacji. Tam także powinny zostać zarejestrowane wszystkie aplikacje używane w projekcie.
 
 W models.py aplikacji znajdują się modele danych - są to klasy dziedziczące po Model. Posiadają zmienne klasowe, które reprezentują kolumny w tabelach baz danych. Nazwa takiego pola jest później używana jako nazwa kolumny, natomiast jej typ definiowany jest przez instancję jednej z klas pochodnych od Field. I tak dla przykładu IntegerField będzie typem całkowitoliczbowym, a CharField znakowym. Parametry podane w konstruktorze pozwalają zdefiniować rozmiar, czy unikalność krotki w kolumnie. Relacje również tworzone są za pomocą pól. Model posiadający pole relacji, może odwoływać się za jego pomocą do powiązanych danych. W Django znajdują się trzy takie klasy:
+
 \begin{itemize}
 	\item ForeignKey -- pole z kluczem obcym, używane w relacjach jeden do wielu. Tworzona jest kolumna w tabeli.
 	\item ManyToManyField -- używane w relacjach wiele do wielu. W bazie danych zostanie automatycznie utworzona tabela pośrednia, z kluczami powiązanych tabel.
