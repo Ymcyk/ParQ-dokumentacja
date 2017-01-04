@@ -1,17 +1,165 @@
+\setcounter{listing}{0}
+
 \section{Implementacja systemu}
 
-\subsection{Szczegóły implementacji}
+W tym rozdziale przedstawione zostały informacje dotyczące implementacji systemu. Na początku omówiono sposób działania aplikacji internetowej oraz mobilnej na przykładowych fragmentach kodu. Dalsza część zawiera wyniki działania systemu, w tym zrzuty ekranu aplikacji mobilnej. Na końcu opisano metody testowania systemu oraz środowiska programistyczne i edytory wykorzystane do realizacji zadań pracy.
 
-Wykorzystane rozszerzenia:
+\subsection{Aplikacja internetowa}
+
+Główne zadania jakie były do zrealizowania podczas implementacji serwera, to: autoryzacja, zarządzanie i identyfikowanie pojazdów, kupno oraz kontrola biletu postojowego. Aby te funkcjonalności mogły być osiągalne dla aplikacji mobilnej, konieczne jest udostępnienie zasobów poprzez adresy URL. W Django razem z projektem tworzony jest plik urls.py, gdzie są one umieszczane w liście urlpatterns. Każda pozycja to wywołanie funkcji ulr(), która jako pierwszy argument przyjmuje wyrażenie regularne z adresem, a jako drugi widok, który obsługuje żądanie.
+
+Na listingu \ref{parq_urls} zaprezentowany jest fragment kodu z pliku urls.py, ze wszystkimi adresami na jakie swoje żądania wysyła aplikacja mobilna. W zależności od realizowanych zadań, przyjmują wybrane metody protokołu HTTP.
+
+\begin{singlespace}
+	\captionof{listing}{Mapowane adresy URL z pliku urls.py}
+	\label{parq_urls}
+	\vspace{0.3cm}
+	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/urlpatterns.py}
+\end{singlespace}
+
+\subsubsection*{Tworzenie konta i autoryzacja}
+
+Z procesem utworzenia konta w systemie przez kierowcę lub kontrolera związanych jest kilka dodatkowych czynności. Są to przypisanie roli oraz generowanie tokenu autoryzacyjnego. Wszyscy użytkownicy tworzeni są w oparciu o istniejący już w Django model użytkownika -- User, z modułu django.contrib.auth.models. Niezbędny jest jednak sposób, który pozwoli na odróżnienie kierowcy od kontrolera, aby można było nadać im odmienne uprawnienia. Do tego celu wykorzystany został dodatek djroles, napisany specjalnie na potrzeby tego systemu. Swoje działanie opiera na istniejących w Django grupach, z którymi domyślnie użytkownicy są w relacji wiele-do-wielu. Dodatek ten tworzy dodatkową tabelę -- Role, w której umieszczane są wybrane grupy. Spośród nich, użytkownik będzie mógł należeć tylko do jednej, w tym samym czasie. Na listingu \ref{driver} pokazany został sposób, w jaki są deklarowane grupy, które będą używane do tworzenia ról. Jest to robione poprzez zadeklarowanie klasy Pythona, która dziedziczy po BaseRole - jej nazwa zostanie użyta do utworzenia grupy. Jako że ten język dopuszcza wielodziedziczenie, wykorzystany został model Driver oraz Officer, dzięki czemu grupa posiada tę samą nazwy co tabele z dodatkowymi informacjami kierowcy i kontrolera.
+
+\begin{singlespace}
+	\captionof{listing}{Fragment modelu Driver}
+	\label{driver}
+	\vspace{0.3cm}
+	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/driver.py}
+\end{singlespace}
+
+\vspace{0.3cm}
+
+Poza przypisaniem grupy, każdy użytkownik w systemie, niezależnie już od pełnionej roli, musi mieć wygenerowany token autoryzacyjny. Obie te czynności realizowane są przez sygnały (ang. signals), dostępne w Django. Są to funkcje, które zostaną wykonane w odpowiedzi na jakieś zdarzenie związane z ustaloną klasą w projekcie. Na listingu \ref{sygnaly} przedstawione zostały sygnały powiązane z domyślną klasą użytkownika User (tworzenie tokenu) oraz klasami Driver i Officer -- przypisywanie do ról. Wykonywane są w odpowiedzi na zapisanie modelu w bazie danych, czyli sygnał post\_save.
+
+\begin{singlespace}
+	\captionof{listing}{Sygnały związane z tworzeniem konta w systemie}
+	\label{sygnaly}
+	\vspace{0.3cm}
+	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/token_signal.py}
+\end{singlespace}
+
+\subsubsection*{Identyfikacja pojazdów}
+
+Z każdym pojazdem kierowcy w systemie powiązany jest identyfikator UUID (ang. Universally unique identifier), czyli 128-bitowa losowa wartość. Przechowywana jest ona w modelu Badge (listing \ref{model_badge}), powiązanym relacją jeden-do-jeden z pojazdem (Vehicle). W modelu znajduje się także metoda generate\_image(). W niej właśnie utworzony zostanie kod QR, w którym zakodowany będzie identyfikator. Do generowania QR w postaci pliku png, użyta została biblioteka Pythona qrcode. Oprócz danych, podawany jest także poziom korekcji błędów i wersja kodu.
+
+\begin{singlespace}
+	\captionof{listing}{Badge - model identyfikatora}
+	\label{model_badge}
+	\vspace{0.3cm}
+	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/badges-badge.py}
+\end{singlespace}
+
+\vspace{0.3cm}
+
+Utworzony w ten sposób kod QR jest następnie wysyłany na e-maila, podanego przez kierowcę podczas rejestracji. Umieszczony w widocznym miejscu pojazdu, będzie używany przez kontrolera podczas sprawdzania biletu.
+
+\subsubsection*{Taryfikator}
+
+Taryfikator oprócz powiązanych ze sobą opłat, musi zawierać także informację o czasie w którym obowiązuje, zarówno godzin jak i konkretnej daty w kalendarzu. Dobrym rozwiązaniem jest umożliwienie ustawienia także takiej daty jako cyklicznej, dzięki czemu dany taryfikator mógłby obowiązywać np.: co tydzień w sobotę. Taką możliwość daje klasa Event, z dodatku django-scheduler. Pozwala ona na stworzenie wydarzenia z datą początkową oraz końcową, która będzie przechowywana w bazie danych. Dodatkowo takie wydarzenie może być cykliczne, a podane daty wyznaczać będą wtedy dzień tygodnia, czy miesiąca. Model Schedule rozszerza Event, dzięki czemu taryfikator posiada zarówno opłaty jak i czas obowiązywania. Na listingu \ref{schedule-create} przedstawiono przykład jego tworzenia.
+
+\begin{singlespace}
+	\captionof{listing}{Tworzenie cotygodniowego taryfikatora}
+	\label{schedule-create}
+	\vspace{0.3cm}
+	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/schedule-create.py}
+\end{singlespace}
+
+
+\subsubsection*{Kupno biletu}
+
+Oprócz pojazdu na jaki ma zostać zakupiony bilet, użytkownik podaje także parking, który razem z datą rozpoczęcia postoju wyznacza obowiązujący taryfikator. Podobnie jak w Strefie Płatnego Parkowania w Szczecinie, cena może się zmieniać w zależności od długości parkowania. Na listingach \ref{calculate-schedule} i \ref{calculate-charge} przedstawione zostały algorytmy naliczające opłatę. W klasie Schedule najpierw wyznaczany jest efektywny czas postoju, w przypadku gdyby podany bilet wykraczał poza datę obowiązywania taryfikatora. Po przedstawieniu czasu trwania postoju w postaci minut, pobierane są wszystkie opłaty powiązane z danym taryfikatorem. Następnie w pętli, aż do wyczerpania ilości minut postoju, każda z opłat nalicza swoją część ceny (model Charge), zgodnie z jej czasem obowiązywania. W przypadku wyczerpania listy opłat przed zakończeniem postoju, ostatnia z nich (tak jak w SPP w Szczecinie) naliczy cenę dla pozostałych minut postoju. W pętli wszystkie opłaty cząstkowe są sumowane i ta właśnie suma zostanie naliczona jako opłata kierowcy.
+
+\begin{singlespace}
+	\captionof{listing}{Obliczanie łącznej kwoty w klasie Schedule}
+	\label{calculate-schedule}
+	\vspace{0.3cm}
+	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/schedule-calculate_price.py}
+\end{singlespace}
+
+\begin{singlespace}
+	\captionof{listing}{Obliczanie częstki ceny w pojedynczej opłacie - model Charge}
+	\label{calculate-charge}
+	\vspace{0.3cm}
+	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/charge-calculate_price.py}
+\end{singlespace}
+
+\subsubsection*{Doładowanie konta}
+
+%TODO sprawdzaj czy podane linie się zgadzają!
+Doładowywanie konta odbywa się dwustopniowo. Najpierw w aplikacji mobilnej użytkownik przelewa swoje pieniądze (np.:~z wykorzystaniem karty płatniczej) na konto PayPal'a powiązane z systemem. Zwrócony identyfikator transakcji wysyłany jest metodą POST do serwera systemu ParQ, na adres payments/. W widoku przedstawionym na listingu \ref{payments_list}, obsługującym ten adres, przedstawiony jest fragment kodu odpowiedzialny za to żądanie. W linii 12 wywoływana jest metoda, w której otrzymany identyfikator przesyłany zostaje do serwera PayPal'a, celem uzyskania informacji o kwocie jaka została przelana. Następnie, jeśli wszystko się zgadza, numer transakcji zapisywany jest w bazie danych (linia 13). Gdy transakcja o takim identyfikatorze już istnieje, zwrócony zostanie w odpowiedzi błąd. Tylko w razie powodzenia wykonana będzie następna linia, gdzie powiązana portmonetka użytkownika jest uzupełniana o wpłaconą kwotę.
+
+\begin{singlespace}
+	\captionof{listing}{payment\_list - widok doładowania konta użytkownika}
+	\label{payments_list}
+	\vspace{0.3cm}
+	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/paypal-views.py}
+\end{singlespace}
+
+\vspace{0.3cm}
+
+Do realizacji tej części pracy wykorzystano kilka dodatków do Django oraz jeden dodatkowy pakiet Pythona, a są to:
 \begin{itemize}
-	\item Django REST Framework -- 
-	\item django-scheduler -- 
-	\item qrcode -- 
-	\item django-ordered-model -- 
-	\item django-countries --
+	\item Django REST Framework -- na jego podstawie tworzone są widoki, które obsługują żądania w architekturze REST. Ten dodatek umożliwia także autoryzacje żądań, opartą na generowanym wcześniej tokenie.
+	\item django-scheduler -- tworzenie wydarzeń, które mogą się powtarzać cyklicznie.
+	\item django-ordered-model -- numerowane relacje w tabelach.
+	\item django-countries -- państwa i ich kody ze standardu ISO 3166.
+	\item djroles -- tworzenie ról w Django.
+	\item qrcode -- pakiet Pythona umożliwiający tworzenie kodów QR.
 \end{itemize}
 
-W aplikacjach mobilnych użyte zostały rozszerzenia:
+\subsection{Aplikacje mobilne}
+
+% tu można powiedzieć coś o strukturze aplikacji, może o składaniu URL, 
+
+\begin{singlespace}
+	\captionof{listing}{Wysłanie żądania z kodem identyfikacyjnym}
+	\vspace{0.3cm}
+	\inputminted[fontsize=\footnotesize, linenos=true]{xml}{src/imp/url-strings.xml}
+\end{singlespace}
+
+%\begin{singlespace}
+%	\captionof{listing}{Klasa tworząca URL}
+%	\vspace{0.3cm}
+%	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/parq-url.java}
+%\end{singlespace}
+
+\subsubsection*{Wysyłanie żądania}
+
+% tu o tym, że w zasadzie wszystkie korzystają z tego samego schematu
+% o tokenie, który jest przesyłany w nagłówku
+
+\begin{singlespace}
+	\captionof{listing}{Wysłanie żądania z kodem identyfikacyjnym}
+	\vspace{0.3cm}
+	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/scan-activity.java}
+\end{singlespace}
+
+\subsubsection*{Kontrola biletu}
+
+\begin{singlespace}
+	\captionof{listing}{Intencja rozpoczynająca aktywność skanowania}
+	\vspace{0.3cm}
+	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/start-scan.java}
+\end{singlespace}
+
+\subsubsection*{Realizacja płatności}
+
+\begin{singlespace}
+	\captionof{listing}{Intencja rozpoczynająca aktywność PayPal'a}
+	\vspace{0.3cm}
+	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/get-payment.java}
+\end{singlespace}
+
+\begin{singlespace}
+	\captionof{listing}{Metoda wywoływana po zakończeniu transakcji}
+	\vspace{0.3cm}
+	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/payment-result.java}
+\end{singlespace}
+
+% kod uruchomienia kamery i o co w tym chodzi - to embedded
+
+% Opis rozszerzeń
 
 \begin{itemize}
 	\item Volley --
@@ -19,9 +167,6 @@ W aplikacjach mobilnych użyte zostały rozszerzenia:
 	\item ZXing (``Zebra Crossing'') --
 	\item ZXing Android Embedded --
 \end{itemize}
-
-\subsubsection*{Aplikacja mobilna}
-\subsubsection*{Aplikacja serwerowa}
 
 \subsection{Wyniki działania systemu}
 

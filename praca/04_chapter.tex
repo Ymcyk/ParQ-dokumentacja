@@ -5,7 +5,7 @@ W tym rozdziale zawarta została dokumentacja techniczna systemu strefy parkowan
 
 \subsection{Schemat działania systemu ParQ}
 
-Stworzony w ramach tej pracy system płatności w strefie płatnego parkowania, nazwany ParQ, umożliwia dokonanie zakupu biletu postojowego, oraz jego późniejszą kontrolę. Obie te czynności wykonywane są w oparciu o generowany dla każdego pojazdu, unikalny kod UUID. To właśnie on znajduje się na plakietkach z kodem QR. Po jego zeskanowaniu, kontroler uzyska informacje o danym pojeździe.
+Stworzony w ramach tej pracy system płatności dostosowany jest do potrzeb Strefy Płatnego Parkowania w Szczecinie. Umożliwia on utworzenie taryfikatora wraz z opłatami, które zmieniają się wraz z czasem postoju. System nazwany został ParQ, umożliwia dokonanie zakupu biletu postojowego, oraz jego późniejszą kontrolę. Obie te czynności wykonywane są w oparciu o generowany dla każdego pojazdu, unikalny kod UUID. To właśnie on znajduje się na plakietkach z kodem QR. Po jego zeskanowaniu, kontroler uzyska informacje o danym pojeździe.
 
 Cała funkcjonalność systemu dostępna jest dla jego użytkowników za pośrednictwem aplikacji na urządzeniach mobilnych. Wykonane one zostały w formie tzw.~``cienkiego klienta'', co oznacza, że nie są przeprowadzane na nich żadne skomplikowane operacje. Komunikują się z serwerem wysyłając do niego żądania, a użytkownikowi prezentowana jest odebrana odpowiedź. Do skorzystania z systemu niezbędne jest posiadanie wcześniej założonego konta.
 
@@ -115,6 +115,7 @@ Wymagania funkcjonalne stanowią zbiór wszystkich funkcjonalności, udostępnia
 	\item Zakup biletu w aplikacji mobilnej powinien trwać nie dłużej niż 5 sekund.
 	\item Uzupełnienie konta w systemie możliwe jest z wykorzystaniem kart płatniczych.
 	\item System powinien być w stanie obsłużyć przynajmniej 400 tyś. użytkowników.
+	\item Opłata za bilet naliczana jest za każdą minutę postoju.
 \end{itemize}
 
 % \subsection{Interfejs graficzny aplikacji mobilnych}
@@ -222,6 +223,7 @@ Wymagania funkcjonalne stanowią zbiór wszystkich funkcjonalności, udostępnia
 Autoryzacja użytkowników w systemie opera się na tokenie, generowanym podczas zakładania konta. Jest on niezbędny do komunikacji serwera z aplikacją mobilną, która uzyskuje go podczas logowania. Dołączany jest on później do nagłówka każdego żądania (oprócz rejestracji oraz logowania).
 
 \captionof{listing}{Dane umieszczane w nagłówkach żądań}
+\label{naglowek_zadania}
 \vspace{-0.3cm}
 \begin{table}[h]
 	\begin{center}
@@ -238,6 +240,7 @@ Poniżej znajdują się żądania wysyłane przez aplikację mobilną oraz odpow
 
 \vspace{0.5cm}
 \captionof{table}{API systemu do komunikacji aplikacji mobilnej z serwerem}
+\label{rest_api}
 \begin{longtable}{p{3.5cm}  p{11cm}}
 	
 	Opis:&Logowanie kierowcy do systemu\\
