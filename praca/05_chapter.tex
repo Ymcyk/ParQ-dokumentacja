@@ -2,7 +2,7 @@
 
 \section{Implementacja systemu}
 
-W tym rozdziale przedstawione zostały informacje dotyczące implementacji systemu. Na początku omówiono sposób działania aplikacji internetowej oraz mobilnej na przykładowych fragmentach kodu. Dalsza część zawiera wyniki działania systemu, w tym zrzuty ekranu aplikacji mobilnej. Na końcu opisano metody testowania systemu oraz środowiska programistyczne i edytory wykorzystane do realizacji zadań pracy.
+W tym rozdziale opisana została implementacja systemu. Na początku omówiono sposób działania aplikacji internetowej oraz mobilnej na przykładowych fragmentach kodu. Dalsza część zawiera wyniki działania systemu, w tym zrzuty ekranu aplikacji mobilnej. Na końcu znajdują się metody testowania systemu oraz środowiska programistyczne i edytory wykorzystane do realizacji zadań pracy.
 
 \subsection{Aplikacja internetowa}
 
@@ -110,38 +110,9 @@ Do realizacji tej części pracy wykorzystano kilka dodatków do Django oraz jed
 
 \subsection{Aplikacje mobilne}
 
-% tu można powiedzieć coś o strukturze aplikacji, może o składaniu URL, 
+Opis zadań itp.
 
-\begin{singlespace}
-	\captionof{listing}{Wysłanie żądania z kodem identyfikacyjnym}
-	\vspace{0.3cm}
-	\inputminted[fontsize=\footnotesize, linenos=true]{xml}{src/imp/url-strings.xml}
-\end{singlespace}
-
-%\begin{singlespace}
-%	\captionof{listing}{Klasa tworząca URL}
-%	\vspace{0.3cm}
-%	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/parq-url.java}
-%\end{singlespace}
-
-\subsubsection*{Wysyłanie żądania}
-
-% tu o tym, że w zasadzie wszystkie korzystają z tego samego schematu
-% o tokenie, który jest przesyłany w nagłówku
-
-\begin{singlespace}
-	\captionof{listing}{Wysłanie żądania z kodem identyfikacyjnym}
-	\vspace{0.3cm}
-	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/scan-activity.java}
-\end{singlespace}
-
-\subsubsection*{Kontrola biletu}
-
-\begin{singlespace}
-	\captionof{listing}{Intencja rozpoczynająca aktywność skanowania}
-	\vspace{0.3cm}
-	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/start-scan.java}
-\end{singlespace}
+\subsubsection*{Parsowanie JSON}
 
 \subsubsection*{Realizacja płatności}
 
@@ -157,9 +128,21 @@ Do realizacji tej części pracy wykorzystano kilka dodatków do Django oraz jed
 	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/payment-result.java}
 \end{singlespace}
 
-% kod uruchomienia kamery i o co w tym chodzi - to embedded
+\subsubsection*{Wysyłanie żądania}
 
-% Opis rozszerzeń
+\begin{singlespace}
+	\captionof{listing}{Wysłanie żądania z kodem identyfikacyjnym}
+	\vspace{0.3cm}
+	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/scan-activity.java}
+\end{singlespace}
+
+\subsubsection*{Kontrola biletu}
+
+\begin{singlespace}
+	\captionof{listing}{Intencja rozpoczynająca aktywność skanowania}
+	\vspace{0.3cm}
+	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/start-scan.java}
+\end{singlespace}
 
 \begin{itemize}
 	\item Volley --
