@@ -7,7 +7,8 @@ W tym rozdziale opisana została implementacja systemu. Na początku omówiono s
 \subsection{Aplikacja internetowa}
 
 Główne zadania jakie były do zrealizowania podczas implementacji serwera, to: autoryzacja, zarządzanie i identyfikowanie pojazdów, kupno oraz kontrola biletu postojowego. Aby te funkcjonalności mogły być osiągalne dla aplikacji mobilnej, konieczne jest udostępnienie zasobów poprzez adresy URL. W Django razem z projektem tworzony jest plik urls.py, gdzie są one umieszczane w liście urlpatterns. Każda pozycja to wywołanie funkcji ulr(), która jako pierwszy argument przyjmuje wyrażenie regularne z adresem, a jako drugi widok, który obsługuje żądanie.
-
+\\
+\\
 Na listingu \ref{parq_urls} zaprezentowany jest fragment kodu z pliku urls.py, ze wszystkimi adresami na jakie swoje żądania wysyła aplikacja mobilna. W zależności od realizowanych zadań, przyjmują wybrane metody protokołu HTTP.
 
 \begin{singlespace}
@@ -105,53 +106,186 @@ Do realizacji tej części pracy wykorzystano kilka dodatków do Django oraz jed
 	\item django-ordered-model -- numerowane relacje w tabelach.
 	\item django-countries -- państwa i ich kody ze standardu ISO 3166.
 	\item djroles -- tworzenie ról w Django.
-	\item qrcode -- pakiet Pythona umożliwiający tworzenie kodów QR.
+	\item qrcode -- pakiet Pythona umożliwiający generowanie kodów QR.
 \end{itemize}
 
 \subsection{Aplikacje mobilne}
 
-Opis zadań itp.
+W ramach pracy zostały wykonane dwie oddzielne aplikacje dla kierowcy oraz kontrolera, ze względu na odmienny sposób w jaki korzystają oni z systemu. Kierowca oprócz logowania, powinien móc m.in. założyć konto, czy dokonać płatności przy doładowywaniu konta. Kontroler w swojej aplikacji powinien mieć możliwość przeprowadzenia kontroli biletów postojowych, co odbywa się poprzez odczytanie plakietki z kodem QR. Do każdej z tych aplikacji zalogować może się jedynie użytkownik posiadający konto, do którego została przypisana odpowiednia rola. Obie wymagają ciągłej komunikacji z serwerem.
 
-\subsubsection*{Parsowanie JSON}
+\subsubsection*{Parsowanie danych}
 
-\subsubsection*{Realizacja płatności}
+Format JSON składa się z par danych - z każdą wartością związany jest klucz, który służy do jej identyfikacji. Przechowywana wartość może być ciągiem znaków, liczą całkowitą i zmiennopozycyjną, ale także obiektem zawierającym dalszy zestaw par (otoczonym nawiasami klamrowymi) lub tablicą takich obiektów (nawiasy klamrowe). JSON przesyłany jest jako tekst w części danych żądania lub odpowiedzi HTTP. W celu wydobycia informacji musi być poddany odpowiedniej analizie, zarówno na serwerze jak i aplikacji mobilnej. W Androidzie parsowanie można wykonać za pomocą klas JSONObject oraz JSONArray z pakietu org.json 
+\\
+\\
+JSONObject umożliwia parsowanie pojedynczego jsona, a dane do analizy podawane są jako ciąg znaków (String) w konstruktorze. Metody instancji tej klasy służące do wydobywania wartości, jako parametr przyjmują nazwę klucza z jakim ta wartość jest związana. Są to m.in: get(), getInt(), czy getString(), a ich użycie zależy od spodziewanego typu wartości przechowywanego w dokumencie. Istnieje także metoda getJSONObject(), która zwraca zagnieżdżony obiekt jsona w postaci instancji klasy JSONObject. JSONArray instancjonowana jest w podobny sposób. Po wywołaniu metody getJSONObject() z indeksem elementu w parametrze, zwracany jest obiekt pojedynczego jsona, czyli klasy JSONObject. Na listingu \ref{parsowanie} znajduje się przykład z wykorzystaniem kolekcji danych.
 
 \begin{singlespace}
-	\captionof{listing}{Intencja rozpoczynająca aktywność PayPal'a}
+	\captionof{listing}{Parsowanie jsona dla kolekcji pojazdów kierowcy}
+	\label{parsowanie}
 	\vspace{0.3cm}
-	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/get-payment.java}
+	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/parsowanie-json.java}
 \end{singlespace}
 
-\begin{singlespace}
-	\captionof{listing}{Metoda wywoływana po zakończeniu transakcji}
-	\vspace{0.3cm}
-	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/payment-result.java}
-\end{singlespace}
+Ten fragment kodu zostaje wykonany, w momencie otrzymania z serwera pojazdów powiązanych z danym kierowcą. Dla każdego elementu tablicy json wydobywany jest obiekt klasy JSONObject, z którego pobierane są dane pojazdu. Zostaną one później zaprezentowane użytkownikowi w odpowiednim widoku.
 
-\subsubsection*{Wysyłanie żądania}
+\subsubsection*{Komunikacja z serwerem}
+
+Komunikacja w systemie polega na wysyłaniu żądań przez aplikacje do serwera i oczekiwaniu na rezultat, który zostanie przesłany w odpowiedzi. Tym zajmuje się biblioteka HTTP -- Volley. Stanowi alternatywę dla wykorzystywanych wcześniej klas Javy, jak HttpURLConnection, będąc rozwiązaniem dedykowanym dla Androida, cechującym się prostotą i szybkością działania. Świetnie nadaje się do prostych API, w których wymiana informacji polega na przesyłaniu list oraz pojedynczych danych w formacie json. Jedną z jej głównych zalet jest zdolność do buforowania odpowiedzi. Jeśli zapytanie może zostać obsłużone dzięki danych znajdującym się w pamięci podręcznej, nie będzie ono musiało zostać ponownie wysłane.
+\\
+\\
+Listing \ref{volley} przedstawia sposób, w jaki konstruowane są zapytania w tej bibliotece. Najpierw w konstruktorze podawany jest rodzaj metody HTTP oraz adres, na jaki żądanie będzie miało zostać wysłane. Dwa następne parametry to obiekty klas anonimowych. Jeśli odpowiedz z serwera będzie zwrócona z kodem 2xx, to wykonana zostanie metoda onResponse() pierwszego obiektu. Parametr response zawiera dane odpowiedzi i to właśnie on będzie poddawaniu parsowaniu. Jeśli odpowiedz jest błędna, czyli wysłana została z kodem 4xx lub 5xx, wykonana zostanie onErrorResponse. Tak utworzone zapytanie dodawane jest do kolejki zapytań, gdzie kolejność wysłania może być zależna od ustawionego priorytetu.
 
 \begin{singlespace}
-	\captionof{listing}{Wysłanie żądania z kodem identyfikacyjnym}
+	\captionof{listing}{Wysłanie żądania}
+	\label{volley}
 	\vspace{0.3cm}
 	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/scan-activity.java}
 \end{singlespace}
 
+\subsubsection*{Realizacja płatności}
+
+Do integracji PayPal'a z aplikacją mobilną została wykorzystana biblioteka PayPal Android SDK, która jest dostępna w ramach open source. Razem z nią, oprócz możliwości realizacji opłat, udostępniane są także gotowe ekrany, gdzie użytkownik może podać swoje dane uwierzytelniające. Biblioteka ta pozwala na realizowanie płatności pojedynczych (tzw. Single Payment, użytkownik za każdym razem musi podawać dane uwierzytelniające) oraz automatycznych (Future Payment, dane podawane tylko raz, a zwrócony token OAuth pozwala na dokonywanie płatności w imieniu użytkownika). W tym systemie oferowana jest tylko pierwsza opcja.
+\\
+\\
+Na listingu \ref{paypal1} przedstawiony został fragment, w którym za pomocą intencji uruchomiona zostaje aktywność uwierzytelnienia płatności. W klasie PayPalPayment podawane zostają informacje odnośnie wysokości płatności, waluty oraz typu transakcji. Obiekt tej klasy, razem z informacjami konfiguracyjnymi, zostaje umieszczony w intencji. Wywołanie metody aktywności Androida startActivityForResult() spowoduje wyświetlenie nowego ekranu.
+
+\begin{singlespace}
+	\captionof{listing}{Intencja rozpoczynająca aktywność PayPal'a}
+	\label{paypal1}
+	\vspace{0.3cm}
+	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/get-payment.java}
+\end{singlespace}
+
+Metoda startAcitvityForResult() uruchamiająca nową aktywność różni się od startActivity() tym, że od docelowej aktywności oczekiwane jest otrzymanie jakiegoś wyniku. Po zakończeniu utworzonego ekranu uruchomiona zastanie metoda onActivityResult(). Do niej właśnie przesłana zostanie odpowiedź z serwera PayPal'a o statusie przeprowadzonej płatności, a także w razie sukcesu, identyfikator płatności. W tym miejscu właśnie będzie on wysłany do serwera systemu, celem jego dalszego uwierzytelnienia.
+
+%\begin{singlespace}
+%	\captionof{listing}{Metoda wywoływana po zakończeniu transakcji}
+%	\label{paypal2}
+%	\vspace{0.3cm}
+%	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/payment-result.java}
+%\end{singlespace}
+
 \subsubsection*{Kontrola biletu}
+
+Kontrola biletu możliwa jest w aplikacji przeznaczonej dla kontrolera. Odbywa się poprzez skanowanie obrazu z kamery wbudowanej w urządzenie mobilne. Do tego celu użyta została biblioteka ZXing ("Zebra Crossing"), która służy do przetwarzania obrazu. Oprócz QR, umożliwia także skanowanie kodów kreskowych. Domyślnie nie są dołączone do niej żadne gotowe aktywności, jak w przypadku PayPal Android SDK. Istnieje jednak dodatek, ZXing Android Embedded, którego sposób działania jest zbliżony do przeprowadzania transakcji. Zawiera on gotową aktywność, w której zostaje uruchomiona kamera urządzenia mobilnego. Na listingu \ref{platnosc} w klasie IntentIntegrator konfigurowany jest najpierw skaner. Podawany jest tam rodzaj kodów graficznych, czy orientacja ekranu. Po natrafieniu przez skaner na kod, skanowanie zostaje zakończone. Informacja jaką udało się odkodować, zwracana jest w metodzie onActivityResult().
 
 \begin{singlespace}
 	\captionof{listing}{Intencja rozpoczynająca aktywność skanowania}
+	\label{platnosc}
 	\vspace{0.3cm}
 	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/start-scan.java}
 \end{singlespace}
 
-\begin{itemize}
-	\item Volley --
-	\item PayPal Android SDK --
-	\item ZXing (``Zebra Crossing'') --
-	\item ZXing Android Embedded --
-\end{itemize}
+Po zeskanowaniu kodu, znajdująca się w nim informacja trafia do serwera. Tam sprawdzane jest najpierw, czy jest to poprawny identyfikator UUID. Wykorzystane do tego zostało odpowiednie wyrażenie regularne. Następnie, jeśli format jest poprawny, wykonywane są zapytania do bazy danych, mające na celu znalezienie tego kodu, powiązanego z nim pojazdu oraz biletu, który jest ważny. Jeśli wszystkie te operacje zakończą się sukcesem, kontroler otrzymuje informację o ważnym bilecie postojowym. W przypadku gdyby któryś z kroków zakończył się niepowodzeniem, konieczne będzie wystawienie mandatu. 
 
+\newpage
 \subsection{Wyniki działania systemu}
+
+Komunikacja użytkownika z systemem odbywa się za pośrednictwem aplikacji mobilnej. W tym podrozdziale zostały zaprezentowane wszystkie ekrany, z których korzystają kierowcy oraz kontrolerzy. 
+
+\subsubsection*{Ekran logowania, rejestracji oraz menu}
+
+Na  przedstawiony został ekran logowania, który jest wspólny dla obu aplikacji.
+
+%TODO poszukać o ref do minipage, label do minipage
+\begin{figure}[h]
+	\centering
+	\begin{minipage}[b]{0.3\textwidth}
+		\includegraphics[width=\textwidth]{05/login}
+		\caption{Logowanie}
+	\end{minipage}
+	\hfill
+	%\hspace{3cm}
+	\begin{minipage}[b]{0.3\textwidth}
+		\includegraphics[width=\textwidth]{05/register}
+		\caption{Rejestracja}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[b]{0.3\textwidth}
+		\includegraphics[width=\textwidth]{05/menu}
+		\caption{Menu główne}
+	\end{minipage}
+\end{figure}
+
+\newpage
+
+\subsubsection*{Bilety}
+
+\begin{figure}[h]
+	\centering
+	\begin{minipage}[b]{0.35\textwidth}
+		\includegraphics[width=\textwidth]{05/tickets}
+		\caption{Lista biletów}
+	\end{minipage}
+	%\hfill
+	\hspace{3cm}
+	\begin{minipage}[b]{0.35\textwidth}
+		\includegraphics[width=\textwidth]{05/buy_ticket}
+		\caption{Ekran zakupu biletu}
+	\end{minipage}
+\end{figure}
+
+\newpage
+
+\subsubsection*{Pojazdy}
+
+\begin{figure}[h]
+	\centering
+	\begin{minipage}[b]{0.35\textwidth}
+		\includegraphics[width=\textwidth]{05/vehicles}
+		\caption{Lista pojazdów}
+	\end{minipage}
+	%\hfill
+	\hspace{3cm}
+	\begin{minipage}[b]{0.35\textwidth}
+		\includegraphics[width=\textwidth]{05/add_vehicle}
+		\caption{Dodawanie pojazdu}
+	\end{minipage}
+\end{figure}
+
+\newpage
+
+\subsubsection*{Płatność}
+
+\begin{figure}[h]
+	\centering
+	\begin{minipage}[b]{0.3\textwidth}
+		\includegraphics[width=\textwidth]{05/payment-1}
+		\caption{Wybór metody}
+	\end{minipage}
+	\hfill
+	%\hspace{3cm}
+	\begin{minipage}[b]{0.3\textwidth}
+		\includegraphics[width=\textwidth]{05/payment-2}
+		\caption{Uwierzytelnienie}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[b]{0.3\textwidth}
+		\includegraphics[width=\textwidth]{05/payment-3}
+		\caption{Potwierdzenie}
+	\end{minipage}
+\end{figure}
+
+\newpage
+
+\subsubsection*{Kontrola biletu}
+
+\begin{figure}[h]
+	\centering
+	\begin{minipage}[b]{0.35\textwidth}
+		\includegraphics[width=\textwidth]{05/scan}
+		\caption{Skanowanie}
+	\end{minipage}
+	%\hfill
+	\hspace{3cm}
+	\begin{minipage}[b]{0.35\textwidth}
+		\includegraphics[width=\textwidth]{05/scan_response}
+		\caption{Weryfikacja}
+	\end{minipage}
+\end{figure}
+
+\newpage
 
 \subsection{Testy}
 

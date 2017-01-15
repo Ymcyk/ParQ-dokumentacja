@@ -1,7 +1,8 @@
 private void getPayment() {
     paymentAmount = amountText.getText().toString();
 
-    PayPalPayment payment = new PayPalPayment(new BigDecimal(String.valueOf(paymentAmount)),
+    PayPalPayment payment = new PayPalPayment(new BigDecimal(
+            String.valueOf(paymentAmount)),
             "PLN", "Ticket Fee", PayPalPayment.PAYMENT_INTENT_SALE);
 
     Intent intent = new Intent(this, PaymentActivity.class);

@@ -92,12 +92,8 @@ Coraz częściej spotykane są, opisywane wcześniej, płatności portfelami ele
 
 %TODO napisać o nich może więcej, dokłądniej. Nazwać to Systemy Płatności, wyjaśnić te wszsytkie nazwy. ie będzie pewnie wiele dłuższe, no ale to jest w tytule
 \subsection{Bramki płatności}
-% co to jest. Opowiedzieć o związku z portfelami - ale że to inne pojęcia
-% tutaj można dać jakiś diagramik jak to wszsytko wygląda
-% opisać działanie
-% zalety, dlaczego coś takiego stosować
-% tabela z dostępnymi usługodawcami
-Wdrożenie jednej lub kilku z wymienionych metod we własnym zakresie nie jest prostym rozwiązaniem. Implementacja z pominięciem wszelkich pośredników może okazać się zajęciem zbyt kosztownym i czasochłonnym, szczególnie dla firm rozpoczynających swoją działalność. Im więcej metod sprzedawca chce udostępnić, tym proces ten jest dłuższy i bardziej skomplikowany, angażując do tego kolejne podmioty. Wymaga to podpisania wielu dodatkowych umów z bankiem, czy posiadania specjalnego konta. 
+
+Wdrożenie jednej lub kilku z wymienionych metod we własnym zakresie nie jest prostym rozwiązaniem. Implementacja z pominięciem wszelkich pośredników może okazać się zajęciem zbyt kosztownym i czasochłonnym, szczególnie dla firm rozpoczynających swoją działalność. Im więcej metod sprzedawca chce udostępnić, tym proces ten jest dłuższy i bardziej skomplikowany, angażując do tego kolejne podmioty. Wymaga to podpisania wielu dodatkowych umów z bankiem, czy posiadania specjalnego w nim konta. 
 
 Bardzo dobrą alternatywą jest skorzystanie z usług operatorów płatności elektronicznych. Są oni pośrednikami transakcji przeprowadzanych w internecie, przyjmując opłaty od klientów i przekazując następnie na rachunek sprzedawców. Ich usługi polegają na integrowaniu wielu metod płatności, dzięki czemu przedsiębiorca nie musi ręcznie wdrażać każdej z nich. Wystarczy, że podpisze umowę z jednym z dostawców systemów płatniczych. Jest to rozwiązanie korzystne także ze strony osoby dokonującej zakupów. Oferowany jest jej szeroki zakres metod, w jakich może dokonać płatności, np.: karty płatnicze, e-przelewy, portmonetki elektroniczne. Korzystanie z usług operatorów płatności jest bardzo częste. W popularnym polskim serwisie aukcyjnym Allegro, wszystkie opłaty realizowane są z pośrednictwem systemu PayU.
 
@@ -112,4 +108,12 @@ Przechodząc do finalizacji transakcji, klient proszony jest na stronie sprzedaw
 	\caption*{Źródło: Elektroniczne metody płatności. \cite{elektroniczne_metody_platnosci}}
 \end{figure}
 
-Na rynku istnieje wielu dostawców takich usług, np.: PayU, Dotpay, Przelewy24, czy PayPal. Różnią się oni między sobą przede wszystkim prowizjami za wypłatę pieniędzy, czy za skorzystanie z jakiejś metody płatności. Większość z nich pełni głównie rolę pośrednią, znajdując się między bankiem kupującego, a sprzedającego. Niektóre z nich, jak PayPal, pełnią także funkcję elektronicznych portmonetek. W tej sytuacji pieniądze od klienta nie trafiają do banku, a przechowywane są w formie elektroniczne. Sprzedawca decyduje czy i kiedy chce aby zostały one przelane na jego konto bankowe. 
+Na rynku istnieje wielu dostawców takich usług, np.: PayU, Dotpay, Przelewy24, czy PayPal. Różnią się oni między sobą przede wszystkim prowizjami za wypłatę pieniędzy, czy za skorzystanie z jakiejś metody płatności. Większość z nich pełni głównie rolę pośrednią, znajdując się między bankiem kupującego, a sprzedającego. 
+
+\subsection{PayPal}
+
+Do realizacji transakcji w stworzonym systemie wykorzystany został PayPal. Oprócz funkcji bramki płatności pełni także rolę elektronicznej portmonetki. W odróżnieniu od pozostałych systemów, pieniądze od klienta nie trafiają bezpośrednio do banku -przechowywane są w formie elektronicznej. Sprzedawca decyduje czy i kiedy chce, aby zostały one przelane na jego konto bankowe.
+
+Integracja PayPal'a z tworzonym systemem opiera się na udostępnianym przez usługę API, którego dokumentacja znajduje się na stronie www.developer.paypal.com. Zapytania kierowane są na stronę www.api.paypal.com. Tworzenie nowej płatności wiąże się z wysłaniem żądania metody Post, protokołu HTTP, na podstronę /v1/payments/payment. W jego ciele muszą zostać umieszczone dane dotyczące przeprowadzanej transakcji, takie jak kwota, informacje o kupującym oraz sprzedawcy. Jako odpowiedz przesyłany zostanie m.in. identyfikator transakcji oraz status płatności. 
+
+Aby móc skorzystać z systemu, kierowca będzie musiał zasilić najpierw swoje konto pewną kwotą. Realizacja tej płatności odbywać się będzie w aplikacji mobilnej, za pośrednictwem specjalnej biblioteki. Zwrócony po udanym przeprowadzeniu transakcji identyfikator zostanie następnie wysłany do serwera systemu. Tam, po uprzednim zweryfikowaniu, nastąpi doładowanie powiązanego z kontem kierowcy portfela elektronicznego. 
