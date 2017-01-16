@@ -239,133 +239,86 @@ Poniżej znajdują się żądania wysyłane przez aplikację mobilną oraz odpow
 % \subsubsection*{Logowanie}
 
 \vspace{0.5cm}
-\captionof{table}{API systemu do komunikacji aplikacji mobilnej z serwerem}
-\label{rest_api}
-\begin{longtable}{p{3.5cm}  p{11cm}}
-	
-	Opis:&Logowanie kierowcy do systemu\\
-	URL:&/login/\\
-	Metoda HTTP:&POST\\
-	Ciało zapytania:&username=nazwa\&password=hasło\&role=driver\\
-	Ciało odpowiedzi:&\{"token":"c6f42c7cff7ae417323b4b12dbad0964f70dd6f5"\}\\
-	
-	&\\
-	
-	Opis:&Logowanie kontrolera do systemu\\
-	URL:&/login/\\
-	Metoda HTTP:&POST\\
-	Ciało zapytania:&username=nazwa\&password=hasło\&role=officer\\
-	Ciało odpowiedzi:&\{"token":"c6f42c7cff7ae417323b4b12dbad0964f70dd6f5"\}\\
-	
-	&\\
-	
-	Opis:&Zakładanie konta przez kierowcę\\
-	URL:&/register/\\
-	Metoda HTTP:&POST\\
-	Ciało zapytania:&\{\newline
-	\-\hspace{1cm}"username":"kierowca",\newline
-	\-\hspace{1cm}"email":"kierowca@wp.pl"\newline
-	\}\\
-	Ciało odpowiedzi:&\{\newline
-	\-\hspace{1cm}"id":7,\newline
-	\-\hspace{1cm}"username":"kierowca",\newline
-	\-\hspace{1cm}"email":"kierowca@wp.pl"\newline
-	\}\\
-	
-	&\\
-	
-	Opis:&Pobranie informacji o użytkowniku\\
-	URL:&/current/\\
-	Metoda HTTP:&GET\\
-	Ciało odpowiedzi:&\{\newline
-	\-\hspace{1cm}"id":7,\newline
-	\-\hspace{1cm}"username":"kierowca",\newline
-	\-\hspace{1cm}"email":"kierowca@wp.pl"\newline
-	\}\\
-	
-	&\\
-	
-	Opis:&Pobranie pojazdów użytkownika\\
-	URL:&/vehicles/\\
-	Metoda HTTP:&GET\\
-	Ciało odpowiedzi:&[\{\newline
-	\-\hspace{1cm}"id":3,\newline
-	\-\hspace{1cm}"owner":9,\newline
-	\-\hspace{1cm}"badge":"8a925556-d686-43bb-8e10-b165c642d77b",\newline
-	\-\hspace{1cm}"name":"Matiz",\newline
-	\-\hspace{1cm}"plate\_country":"PL",\newline
-	\-\hspace{1cm}"plate\_number":"ZS11111"\newline
-	\}]\\
-	
-	&\\
-	
-	Opis:&Stworzenie pojazdu\\
-	URL:&/vehicles/\\
-	Metoda HTTP:&POST\\
-	Ciało zapytania:&\{\newline
-	\-\hspace{1cm}"name":"Matiz",\newline
-	\-\hspace{1cm}"plate\_country":"PL",\newline
-	\-\hspace{1cm}"plate\_number":"ZS11111"\newline
-	\}\\
-	Ciało odpowiedzi:&\{\newline
-	\-\hspace{1cm}"id":3,\newline
-	\-\hspace{1cm}"owner":9,\newline
-	\-\hspace{1cm}"badge":"8a925556-d686-43bb-8e10-b165c642d77b",\newline
-	\-\hspace{1cm}"name":"Matiz",\newline
-	\-\hspace{1cm}"plate\_country":"PL",\newline
-	\-\hspace{1cm}"plate\_number":"ZS11111"\newline
-	\}\\
-	
-	&\\
-	
-	Opis:&Usunięcie pojazdu\\
-	URL:&/vehicles/\{id\}\\
-	Metoda HTTP:&DELETE\\
-	
-	&\\
-	
-	Opis:&Pobranie listy parkingów\\
-	URL:&/parkings/\\
-	Metoda HTTP:&GET\\
-	Ciało odpowiedzi:&[\{\newline
-	\-\hspace{1cm}"id":1,\newline
-	\-\hspace{1cm}"name":"Strefa A",\newline
-	\-\hspace{1cm}"description":"opis"\newline
-	\}]\\
-	
-	&\\
-	
-	Opis:&Utworzenie biletu przez kierowcę\\
-	URL:&/tickets/\\
-	Metoda HTTP:&POST\\
-	Ciało zapytania:&\{\newline
-	\-\hspace{1cm}"start":"2017-01-02T07:00:00Z",\newline
-	\-\hspace{1cm}"end":"2017-01-02T08:00:00Z",\newline
-	\-\hspace{1cm}"vehicle":1\newline
-	\-\hspace{1cm}"parking":1\newline
-	\}\\
-	
-	&\\
-	
-	Opis:&Otrzymanie informacji o zaparkowanym pojeździe przez kontrolera\\
-	URL:&/tickets/?badge=18a131b1-7ff0-412b-8d6a-65b30c8e3ede\\
-	Metoda HTTP:&GET\\
-	Ciało odpowiedzi:&[\{\\
-	&\-\hspace{1cm}"start":"2017-01-02T07:00:00Z",\\
-	&\-\hspace{1cm}"end":"2017-01-02T08:00:00Z",\\
-	&\-\hspace{1cm}"vehicle":\{\\
-	&\-\hspace{2cm}"id":1,"owner":1,\\
-	&\-\hspace{2cm}"badge":"18a131b1-7ff0-412b-8d6a-65b30c8e3ede",\\
-	&\-\hspace{2cm}"name":"Golf",\\
-	&\-\hspace{2cm}"plate\_country":"PL",\\
-	&\-\hspace{2cm}"plate\_number":"ZS11111"\\
-	&\},\\
-	&\-\hspace{1cm}"parking":\{\\
-	&\-\hspace{2cm}"id":1,\\
-	&\-\hspace{2cm}"name":"Strefa A",\\
-	&\-\hspace{2cm}"description":""\\
-	&\-\hspace{2cm}\},\\
-	&\-\hspace{1cm}"price":"1.00"\\
-	&\}]\\
-%TODO Pobieranie grafiku i taryfikatora
-\end{longtable}
+
+\begin{enumerate}
+	\item Logowanie do systemu
+	\renewcommand{\labelitemi}{\textperiodcentered}
+	\begin{itemize}
+		\item Adres: /api/login/
+		\item Metoda: POST
+		\item Dane żądania:
+		\inputminted[fontsize=\footnotesize]{json}{src/api/login.json}
+		\item Odpowiedź:
+		\inputminted[fontsize=\footnotesize]{json}{src/api/login-response.json}
+	\end{itemize}
+	\item Zakładanie konta
+	\renewcommand{\labelitemi}{\textperiodcentered}
+	\begin{itemize}
+		\item Adres: /api/register/
+		\item Metoda: POST
+		\item Dane żądania:
+		\inputminted[fontsize=\footnotesize]{json}{src/api/register.json}
+		\item Odpowiedź:
+		\inputminted[fontsize=\footnotesize]{json}{src/api/register-response.json}
+	\end{itemize}
+	\item Lista pojazdów
+	\renewcommand{\labelitemi}{\textperiodcentered}
+	\begin{itemize}
+		\item Adres: /api/vehicles/
+		\item Metoda: GET
+		\item Odpowiedź:
+		\inputminted[fontsize=\footnotesize]{json}{src/api/vehicles-response.json}
+	\end{itemize}
+	\item Dodawanie pojazdu
+	\renewcommand{\labelitemi}{\textperiodcentered}
+	\begin{itemize}
+		\item Adres: /api/vehicles/{{id}}
+		\item Metoda: POST
+		\item Dane żądania:
+		\inputminted[fontsize=\footnotesize]{json}{src/api/vehicles_post.json}
+		\item Odpowiedź:
+		\inputminted[fontsize=\footnotesize]{json}{src/api/vehicle-created.json}
+	\end{itemize}
+	\item Usuwanie pojazdu
+	\renewcommand{\labelitemi}{\textperiodcentered}
+	\begin{itemize}
+		\item Adres: /api/vehicles/{{id}}
+		\item Metoda: DELETE
+	\end{itemize}
+	\item Lista parkingów z godzinami otwarcia
+	\renewcommand{\labelitemi}{\textperiodcentered}
+	\begin{itemize}
+		\item Adres: /api/parkings/
+		\item Metoda: GET
+		\item Odpowiedź:
+		\inputminted[fontsize=\footnotesize]{json}{src/api/parkings-response.json}
+	\end{itemize}
+	\item Zakup biletu
+	\renewcommand{\labelitemi}{\textperiodcentered}
+	\begin{itemize}
+		\item Adres: /api/tickets/
+		\item Metoda: POST
+		\item Dane żądania:
+		\inputminted[fontsize=\footnotesize]{json}{src/api/ticket-post.json}
+		\item Odpowiedź:
+		\inputminted[fontsize=\footnotesize]{json}{src/api/ticket-response.json}
+	\end{itemize}
+	\item Profil zalogowanego użytkownika
+	\renewcommand{\labelitemi}{\textperiodcentered}
+	\begin{itemize}
+		\item Adres: /api/parkings/
+		\item Metoda: GET
+		\item Odpowiedź:
+		\inputminted[fontsize=\footnotesize]{json}{src/api/current-response.json}
+	\end{itemize}
+	\item Potwierdzenie transakcji
+	\renewcommand{\labelitemi}{\textperiodcentered}
+	\begin{itemize}
+		\item Adres: /api/payments/
+		\item Metoda: POST
+		\item Dane żądania:
+		\inputminted[fontsize=\footnotesize]{json}{src/api/payments-post.json}
+	\end{itemize}
+\end{enumerate}
+
+

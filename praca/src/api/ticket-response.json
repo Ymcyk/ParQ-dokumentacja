@@ -1,0 +1,17 @@
+[{
+    "start":"2017-01-02T07:00:00Z",
+    "end":"2017-01-02T08:00:00Z",
+    "vehicle":{
+        "id":1,"owner":1,
+        "badge":"18a131b1-7ff0-412b-8d6a-65b30c8e3ede",
+        "name":"Golf",
+        "plate_country":"PL",
+        "plate_number":"ZS11111"
+    },
+    "parking":{
+        "id":1,
+        "name":"Strefa A",
+        "description":""
+    },
+    "price":"1.00"
+}]
