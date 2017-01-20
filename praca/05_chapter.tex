@@ -159,13 +159,6 @@ Na listingu \ref{paypal1} przedstawiony został fragment, w którym za pomocą 
 
 Metoda startAcitvityForResult() uruchamiająca nową aktywność różni się od startActivity() tym, że od docelowej aktywności oczekiwane jest otrzymanie jakiegoś wyniku. Po zakończeniu utworzonego ekranu uruchomiona zastanie metoda onActivityResult(). Do niej właśnie przesłana zostanie odpowiedź z serwera PayPal'a o statusie przeprowadzonej płatności, a także w razie sukcesu, identyfikator płatności. W tym miejscu właśnie będzie on wysłany do serwera systemu, celem jego dalszego uwierzytelnienia.
 
-%\begin{singlespace}
-%	\captionof{listing}{Metoda wywoływana po zakończeniu transakcji}
-%	\label{paypal2}
-%	\vspace{0.3cm}
-%	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/payment-result.java}
-%\end{singlespace}
-
 \subsubsection*{Kontrola biletu}
 
 Kontrola biletu możliwa jest w aplikacji przeznaczonej dla kontrolera. Odbywa się poprzez skanowanie obrazu z kamery wbudowanej w urządzenie mobilne. Do tego celu użyta została biblioteka ZXing ("Zebra Crossing"), która służy do przetwarzania obrazu. Oprócz QR, umożliwia także skanowanie kodów kreskowych. Domyślnie nie są dołączone do niej żadne gotowe aktywności, jak w przypadku PayPal Android SDK. Istnieje jednak dodatek, ZXing Android Embedded, którego sposób działania jest zbliżony do przeprowadzania transakcji. Zawiera on gotową aktywność, w której zostaje uruchomiona kamera urządzenia mobilnego. Na listingu \ref{platnosc} w klasie IntentIntegrator konfigurowany jest najpierw skaner. Podawany jest tam rodzaj kodów graficznych, czy orientacja ekranu. Po natrafieniu przez skaner na kod, skanowanie zostaje zakończone. Informacja jaką udało się odkodować, zwracana jest w metodzie onActivityResult().
@@ -180,115 +173,110 @@ Kontrola biletu możliwa jest w aplikacji przeznaczonej dla kontrolera. Odbywa s
 Po zeskanowaniu kodu, znajdująca się w nim informacja trafia do serwera. Tam sprawdzane jest najpierw, czy jest to poprawny identyfikator UUID. Wykorzystane do tego zostało odpowiednie wyrażenie regularne. Następnie, jeśli format jest poprawny, wykonywane są zapytania do bazy danych, mające na celu znalezienie tego kodu, powiązanego z nim pojazdu oraz biletu, który jest ważny. Jeśli wszystkie te operacje zakończą się sukcesem, kontroler otrzymuje informację o ważnym bilecie postojowym. W przypadku gdyby któryś z kroków zakończył się niepowodzeniem, konieczne będzie wystawienie mandatu. 
 
 \newpage
+
 \subsection{Wyniki działania systemu}
 
-Komunikacja użytkownika z systemem odbywa się za pośrednictwem aplikacji mobilnej. W tym podrozdziale zostały zaprezentowane wszystkie ekrany, z których korzystają kierowcy oraz kontrolerzy. 
-
-\subsubsection*{Ekran logowania, rejestracji oraz menu}
-
-Na  przedstawiony został ekran logowania, który jest wspólny dla obu aplikacji.
-
-%TODO poszukać o ref do minipage, label do minipage
-\begin{figure}[h]
-	\centering
-	\begin{minipage}[b]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{05/login}
-		\caption{Logowanie}
-	\end{minipage}
-	\hfill
-	%\hspace{3cm}
-	\begin{minipage}[b]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{05/register}
-		\caption{Rejestracja}
-	\end{minipage}
-	\hfill
-	\begin{minipage}[b]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{05/menu}
-		\caption{Menu główne}
-	\end{minipage}
-\end{figure}
-
-\newpage
-
-\subsubsection*{Bilety}
+Kierowca korzystający z systemu ParQ, oprócz logowania i rejestracji, może także doładować konto, dodawać nowe pojazdy oraz kupować bilety postojowe w przeznaczonej dla niego aplikacji. Kontroler natomiast ma możliwość przeprowadzenia kontroli zaparkowanego pojazdu z wykorzystaniem wbudowanego w telefon aparatu. Poniżej znajduje się opis funkcjonującego systemu, z zrzutami ekranów stworzonych na jego potrzeby aplikacji mobilnych oraz wynikami działania serwera.
+\\
+\\
+W pierwszej kolejności opisana została aplikacja przeznaczona dla kierowcy, korzystającego ze strefy płatnego parkowania. Po zalogowaniu do niej, wyświetlany jest ekran główny, znajdujący się na rys. 5.1. To tutaj użytkownik uzyskuje podstawowe dane powiązane ze swoim kontem, takie jak ilość pieniędzy znajdujących się w portmonetce, czy godziny płatnego postoju w dniu sprawdzania. Tutaj też są wyświetlane informacje o wszystkich aktywnych biletach postojowych, wraz z informacjami o pojeździe na który zostały zakupione i godziną zakończenia. Z ekranu głównego możliwe jest przejście do pozostałych ekranów aplikacji. Po naciśnięciu ikonki w lewym górnym rogu, wysuwa się menu boczne przedstawione na rys. 5.2. Na górze wyświetlana jest nazwa oraz e-mail zalogowanego użytkownika. Poniżej znajdują się opcje przenoszące do ekranów zakupu biletu, zarządzania pojazdami lub doładowywania konta.
 
 \begin{figure}[h]
 	\centering
-	\begin{minipage}[b]{0.35\textwidth}
-		\includegraphics[width=\textwidth]{05/tickets}
-		\caption{Lista biletów}
+	\begin{minipage}[b]{0.25\textwidth}
+		\includegraphics[width=\textwidth]{05/driver_dashboard3}
+		\caption{Informacje o koncie}
 	\end{minipage}
 	%\hfill
 	\hspace{3cm}
-	\begin{minipage}[b]{0.35\textwidth}
-		\includegraphics[width=\textwidth]{05/buy_ticket}
-		\caption{Ekran zakupu biletu}
+	\begin{minipage}[b]{0.25\textwidth}
+		\includegraphics[width=\textwidth]{05/driver_drawer}
+		\caption{Menu boczne aplikacji}
 	\end{minipage}
 \end{figure}
 
+Doładowywanie konta (rys. 5.3 i 5.4) rozpoczyna się od podania kwoty, jaką konto użytkownika w systemie ma zostać doładowane. Zatwierdzenie jej, powoduje pokazanie ekranów pochodzących z wykorzystywanej do realizacji płatności biblioteki -- PayPal Android SDK. To w nich możliwe jest wybranie metody płatności, uwierzytelnienie oraz zatwierdzenie transakcji. Po zakończeniu, użytkownik przenoszony jest na ekran główny z zaktualizowanym stanem konta.
+
 \newpage
 
-\subsubsection*{Pojazdy}
-
-\begin{figure}[h]
+\begin{figure}[h!]
 	\centering
-	\begin{minipage}[b]{0.35\textwidth}
-		\includegraphics[width=\textwidth]{05/vehicles}
-		\caption{Lista pojazdów}
+	\begin{minipage}[b]{0.25\textwidth}
+		\includegraphics[width=\textwidth]{05/driver_doladowanie}
+		\caption{Pole z kwotą doładowania}
 	\end{minipage}
 	%\hfill
 	\hspace{3cm}
-	\begin{minipage}[b]{0.35\textwidth}
-		\includegraphics[width=\textwidth]{05/add_vehicle}
-		\caption{Dodawanie pojazdu}
+	\begin{minipage}[b]{0.25\textwidth}
+		\includegraphics[width=\textwidth]{05/driver_paypal1}
+		\caption{Realizacja płatności w PayPal}
 	\end{minipage}
 \end{figure}
 
-\newpage
+Do zakupu biletu w systemie niezbędna jest informacja o pojeździe oraz parkingu, w którym będzie odbywał się postój. Te czynności wykonywane są na dwóch ekranach zaprezentowanych poniżej. Wybranie samochodu na rys. 5.5 spowoduje wyświetlenie ekranu z rys. 5.6, gdzie należy wskazać parking oraz czas postoju w minutach. Gdy użytkownik posiada odpowiednią ilość pieniędzy, nastąpi zakupienie biletu, czego potwierdzenie znajdzie się na ekranie głównym aplikacji.
 
-\subsubsection*{Płatność}
-
-\begin{figure}[h]
+\begin{figure}[h!]
 	\centering
-	\begin{minipage}[b]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{05/payment-1}
-		\caption{Wybór metody}
-	\end{minipage}
-	\hfill
-	%\hspace{3cm}
-	\begin{minipage}[b]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{05/payment-2}
-		\caption{Uwierzytelnienie}
-	\end{minipage}
-	\hfill
-	\begin{minipage}[b]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{05/payment-3}
-		\caption{Potwierdzenie}
-	\end{minipage}
-\end{figure}
-
-\newpage
-
-\subsubsection*{Kontrola biletu}
-
-\begin{figure}[h]
-	\centering
-	\begin{minipage}[b]{0.35\textwidth}
-		\includegraphics[width=\textwidth]{05/scan}
-		\caption{Skanowanie}
+	\begin{minipage}[b]{0.25\textwidth}
+		\includegraphics[width=\textwidth]{05/driver_kup_bilet1}
+		\caption{Zakup biletu - wybór pojazdu}
 	\end{minipage}
 	%\hfill
 	\hspace{3cm}
-	\begin{minipage}[b]{0.35\textwidth}
-		\includegraphics[width=\textwidth]{05/scan_response}
-		\caption{Weryfikacja}
+	\begin{minipage}[b]{0.25\textwidth}
+		\includegraphics[width=\textwidth]{05/driver_kup_bilet2}
+		\caption{Zakup biletu - parking i czas}
 	\end{minipage}
 \end{figure}
 
+Na rys. \ref{przejscia_kierowca} znajduje się schemat, na którym przedstawione zostały wszystkie ekrany oraz możliwe przejścia między nimi w aplikacji przeznaczonej dla kierowców.
+
 \newpage
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[width=0.7\linewidth]{05/all}
+	\end{center}
+	\caption{Ekrany w aplikacji kierowcy}
+	\label{przejscia_kierowca}
+\end{figure}
+
+\newpage
+
+Druga z aplikacji umożliwiająca przeprowadzenie kontroli, została zbudowana z trzech ekranów. Po zalogowaniu, użytkownikowi prezentowany jest widok, na którym będą wyświetlane informacje o kontrolowanym pojeździe. Włączenie aparatu telefonu i rozpoczęcie przeprowadzania kontroli, zaczyna się w momencie dotknięcia przycisku ``Skanuj''. W chwili napotkania dowolnego kodu QR, skanowanie zostaje zakończone, a dane znajdujące się w kodzie są wysyłane do serwera systemu. Zwrócona odpowiedź jest prezentowana na ekranie, który był widoczny zaraz po zalogowaniu. To tutaj kontroler zostanie poinformowany o tym, czy kod jest poprawny i czy jest z nim powiązany obowiązujący bilet. W celu dalszej weryfikacji, prezentowana jest także informacja o numerze rejestracyjnym, aby można było sprawdzić czy plakietka z kodem QR jest powiązana z zaparkowanym pojazdem. Na rys. \ref{przejscia_kontroler} znajdują się ekrany aplikacji kontrolera.
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[width=0.7\linewidth]{05/all_officer}
+	\end{center}
+	\caption{Ekrany w aplikacji kontrolera}
+	\label{przejscia_kontroler}
+\end{figure}
+
+Cała funkcjonalność systemu dostępna z poziomu aplikacji mobilnych oparta jest na wymianie danych z serwerem. To właśnie udostępnianie odpowiedniego API jest głównym zadaniem aplikacji internetowej. W ten sposób tworzone są konta użytkowników, dodawane nowe pojazdy, kupowane oraz sprawdzane bilety. Oprócz tego system umożliwia także zarządzanie parkingiem, w tym dodawanie nowych grafików, taryfikatorów, czy tworzenie kont kontrolerów. To realizowane jest za pomocą strony administracyjnej, do której dostęp będą mieć pracownicy administracyjni. Strona ta została wygenerowana automatycznie przez framework Django, na bazie utworzonych modeli. Każdy z nich może być z jej poziomu tworzony, aktualizowany czy usuwany. Na rys. \ref{serwer_admin} została przedstawiona strona główna. Rys. \ref{serwer_schedule} przedstawia jedną z podstron, w której tworzony jest nowy grafik.
+
+\newpage
+
+\begin{figure}[p]
+	\begin{center}
+		\includegraphics[width=0.9\linewidth]{05/admin_main}
+	\end{center}
+	\caption{Główny panel administratora}
+	\label{serwer_admin}
+\end{figure}
+
+\begin{figure}[p]
+	\begin{center}
+		\includegraphics[width=0.9\linewidth]{05/admin_schedule}
+	\end{center}
+	\caption{Dodawanie nowego grafiku}
+	\label{serwer_schedule}
+\end{figure}
+
+\clearpage
 
 \subsection{Testy}
 
+
+
 \subsection{Środowiska programistyczne i edytory}
-\subsubsection*{Vim}
-\subsubsection*{Android Studio}
