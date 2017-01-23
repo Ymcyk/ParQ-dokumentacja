@@ -44,7 +44,7 @@ System przeznaczony jest dla miejskich stref płatnego parkowania, które chcą 
 
 \subsubsection*{Technologie}
 
-Aplikacja internetowa została napisana w języku Python 3, z wykorzystaniem frameworku Django 1.10. Część mobilna wykonana jest w systemie Android i języku Java. Do realizacji zadań konieczne było wykorzystanie zewnętrznych bibliotek oraz rozszerzeń.
+Aplikacja internetowa została napisana w języku Python 3, z wykorzystaniem frameworka Django 1.10. Część mobilna wykonana jest w systemie Android i języku Java. Płatności odbywają się za pośrednictwem systemu PayPal. Do realizacji zadań konieczne było wykorzystanie zewnętrznych bibliotek oraz rozszerzeń.
 
 \subsubsection*{Wymagania funkcjonalne}
 
@@ -72,13 +72,14 @@ Wymagania funkcjonalne stanowią zbiór wszystkich funkcjonalności, udostępnia
 		\end{itemize}
 	\item Zakup biletu postojowego
 		\begin{itemize}
-			\item Kierowca kupując bilet, określa datę początkową, końcową, oraz parking w jakim chce dany bilet kupić.
+			\item Kierowca kupując bilet określa czas postoju oraz parking w jakim chce dany bilet kupić.
 			\item Kierowca może zakupić bilet, jeżeli posiada środki w wirtualnej portmonetce oraz przynajmniej jeden zarejestrowany pojazd w systemie.
+			\item Bilet obowiązuje od chwili zakupu.
+			\item Nie ma możliwości zakupu biletu na datę inną, niż moment zakupu.
 			\item Kierowca może kupić bilet jedynie dla pojazdu przypisanego do jego konta.
 			\item Kierowca nie może zakupić biletu, jeżeli nie posiada wystarczającej ilości środków.
 			\item Bilet może obowiązywać tylko na jeden taryfikator.
 			\item Bilet nie może zostać kupiony, jeżeli nie obowiązuje żaden taryfikator.
-			\item Środki z wirtualnej portmonetki kierowcy są 
 			\item Zakupu biletu postojowego może dokonać jedynie użytkownik, który ma przypisaną rolę kierowcy.
 		\end{itemize}
 	\item Płatności
@@ -92,8 +93,8 @@ Wymagania funkcjonalne stanowią zbiór wszystkich funkcjonalności, udostępnia
 		\begin{itemize}
 			\item Kontrolę biletu może przeprowadzać jedynie zalogowany użytkownik, który ma przypisaną rolę kontrolera.
 			\item Kontrola odbywa się poprzez zeskanowanie kodu QR z identyfikatorem pojazdu.
-			\item Kontroler po zeskanowaniu otrzymuje informacje o numerze rejestracyjnym pojazdu, celem sprawdzenia, czy dany identyfikator jest faktycznie przypisany do kontrolowanego pojazdu.
-			\item Kontroler otrzymuje informację o legalności postoju -- czy bilet został zakupiony i czy jest ważny oraz na jaki parking został zakupiony.
+			\item Kontroler po zeskanowaniu otrzymuje informacje o numerze rejestracyjnym pojazdu, celem sprawdzenia, czy dany identyfikator jest przypisany do kontrolowanego pojazdu.
+			\item Kontroler otrzymuje informację o ważności postoju -- czy bilet został zakupiony i czy jest ważny oraz na jaki parking został zakupiony.
 		\end{itemize}
 	\item Zarządzanie parkingami
 		\begin{itemize}
@@ -118,12 +119,8 @@ Wymagania funkcjonalne stanowią zbiór wszystkich funkcjonalności, udostępnia
 	\item Opłata za bilet naliczana jest za każdą minutę postoju.
 \end{itemize}
 
-% \subsection{Interfejs graficzny aplikacji mobilnych}
-
 \newpage
 \subsection{Diagramy UML}
-
-%\subsubsection*{Diagramy przypadków użycia}
 
 \begin{figure}[h]
 	\begin{center}
@@ -139,12 +136,6 @@ Wymagania funkcjonalne stanowią zbiór wszystkich funkcjonalności, udostępnia
 	\caption{Przypadki użycia dla kontrolera, pracownika i administratora}
 \end{figure}
 
-% \newpage
-
-% \subsubsection*{Diagram pakietów}
-
-% \vspace{1.5cm}
-
 \begin{figure}[p]
 	\begin{center}
 		\includegraphics[width=0.99\linewidth]{04/packages}
@@ -152,19 +143,12 @@ Wymagania funkcjonalne stanowią zbiór wszystkich funkcjonalności, udostępnia
 	\caption{Diagram pakietów}
 \end{figure}
 
-%\newpage
-
-%\subsubsection*{Diagramy klas}
-
-%\vspace{1.5cm}
-
 \begin{figure}[p]
 	\begin{center}
 		\includegraphics[width=1.0\linewidth]{04/ParQ_class_users}
 	\end{center}
 	\caption{Diagram klas dla pakietów paypal, users, badges oraz powiązanych}
 \end{figure}
-
 
 \begin{figure}[p]
 	\begin{center}
@@ -179,10 +163,6 @@ Wymagania funkcjonalne stanowią zbiór wszystkich funkcjonalności, udostępnia
 	\end{center}
 	\caption{Diagram klas rejestracji, dodawania pojazdu i zakupu biletu aplikacji mobilnej}
 \end{figure}
-
-%\newpage
-
-%\subsubsection*{Diagramy sekwencji}
 
 \begin{figure}[p]
 	\begin{center}
@@ -221,10 +201,6 @@ Wymagania funkcjonalne stanowią zbiór wszystkich funkcjonalności, udostępnia
 
 \newpage
 
-% \subsubsection*{Diagramy aktywności}
-
-% \subsection{Projekt bazy danych}
-
 \subsection{Opis REST API}
 
 Autoryzacja użytkowników w systemie opera się na tokenie, generowanym podczas zakładania konta. Jest on niezbędny do komunikacji serwera z aplikacją mobilną, która uzyskuje go podczas logowania. Dołączany jest on później do nagłówka każdego żądania (oprócz rejestracji oraz logowania).
@@ -242,8 +218,6 @@ Autoryzacja użytkowników w systemie opera się na tokenie, generowanym podczas
 \end{table}
 
 Poniżej znajdują się żądania wysyłane przez aplikację mobilną oraz odpowiedzi, jakie otrzyma w przypadku poprawnych zapytań.
-
-% \subsubsection*{Logowanie}
 
 \vspace{0.5cm}
 
@@ -327,5 +301,3 @@ Poniżej znajdują się żądania wysyłane przez aplikację mobilną oraz odpow
 		\inputminted[fontsize=\footnotesize]{json}{src/api/payments-post.json}
 	\end{itemize}
 \end{enumerate}
-
-
