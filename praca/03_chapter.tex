@@ -1,1 +1,45 @@
-\section{Podobne rozwiązania}
+\section{Opłaty w strefie płatnego parkowania}
+
+W tym rozdziale znajdują się informacje dotyczące szczecińskiej Strefy Płatnego Parkowania. Przedstawione są tutaj m.in. sposoby naliczania opłat, cennik, czy taryfikator. Informacje i wymagania związane z SPP są istotne dla tworzonego systemu, ponieważ to na ich bazie została zaimplementowana w nim logika biznesowa. W drugiej części tego rozdziału przedstawione są podobne rozwiązania do tworzonego systemu, które aktualnie funkcjonują w Szczecinie.
+
+\subsection{Strefa Płatnego Parkowania w Szczecinie}
+
+Zgodnie z obwieszczeniem Rady Miasta Szczecin z dnia 26 maja 2014~r. \cite{obwieszczenie} strefa płatnego parkowania w Szczecinie podzielona jest na dwie podstrefy: A i B. W każdej z nich obowiązuje inny cennik, który został przedstawiony w tabeli \ref{cennik}. W niej znajdują się także różne stawki, a to które z nich będą brane pod uwagę podczas naliczania opłaty, zależny od czasu postoju. Parkowanie w strefie jest płatne w dni robocze, w godzinach od 8:00 do 17:00 z wyjątkiem dni wolnych od pracy.
+
+\begin{table}[h]
+	\caption{Stawki w strefie płatnego parkowania w Szczecinie}
+	\label{cennik}
+	\begin{center}
+		\begin{tabular}{| c | c | c | c |}
+			\hline
+			\multirow{2}{*}{L.p.} & \multirow{2}{*}{Opłaty jednorazowe} & \multicolumn{2}{| c |}{Kwota w zł.}\\
+			\cline{3-4}
+			&&Podstrefa A&Podstrefa B\\
+			\hline
+			1.&do 15 minut&0,70&0,40\\
+			\hline
+			2.&pierwsza godzina&2,80&1,60\\
+			\hline
+			3.&druga godzina&3,20&1,80\\
+			\hline
+			4.&trzecia godzina&3,60&2,00\\
+			\hline
+			5.&każda kolejna godzina&2,80&1,60\\
+			\hline
+		\end{tabular}
+	\end{center}	
+\end{table}
+
+Ważna jest także informacja odnośnie czasu w którym bilety obwiązują, a mianowicie moment zakupu jest także chwilą, w której zaczynają być ważne. Nie ma możliwości zakupu biletów tzw. ``do przodu'', których czas rozpoczęcia jest późniejszy od daty zakupu \cite{sumowanie}. 
+
+\subsection{Zakup i kontrola biletu}
+
+Bilety postojowe są dostępne do kupienia w parkomatach, rozmieszczonych w miejscach gdzie obowiązuje strefa płatnego parkowania. Długość postoju ustalana jest na bazie kwoty, jaka została wpłacona oraz podstrefy, w której bilet został kupiony. Płatność może być realizowana gotówką, ale także przy użyciu karty SKA (Szczecińska Karta Aglomeracyjna), która w tym przypadku działa jak wirtualna portmonetka. Otrzymany wydruk potwierdzający opłacenie miejsca, należy umieścić za przednią szybą pojazdu. Kontroler sprawdza czy bilet został kupiony na odpowiednią podstrefę i czy nie przekroczono czasu postoju.
+
+Oprócz parkomatów, od pewnego czasu w Szczecinie bilet może być kupiony także poprzez aplikację na urządzenia mobilne, a jednym z takich rozwiązań jest system moBiLET. Dostępny w wielu miastach Polski, pozwala na zakup nie tylko biletów postojowych, ale także komunikacji miejskiej, czy kolejowych. Po pobraniu aplikacji i zarejestrowaniu, niezbędne jest jeszcze doładowanie wirtualnej portmonetki, powiązanej z kontem użytkownika. W przypadku korzystania z strefy płatnego parkowania, konieczne jest jeszcze dodanie samochodu oraz umieszczenie w nim informacji, że bilet dla danego pojazdu został opłacony za pomocą tej właśnie aplikacji. Dzięki tej informacji, kontroler po wprowadzeniu numeru rejestracyjnego pojazdu, będzie mógł sprawdzić ważność biletu.
+
+\subsubsection*{System ParQ}
+
+Tworzony w ramach pracy system ParQ różni się od istniejących rozwiązań wykorzystaniem kodów QR. Każdy z pojazdów będzie musiał posiadać plakietkę z tym kodem, gdyż to za ich pomocą odbywa się identyfikacja pojazdów w systemie. Z perspektywy kierowcy, działanie tego systemu jest zbliżone do istniejących już rozwiązań. Po założeniu oraz doładowaniu konta odpowiednią kwotą, konieczne jest jeszcze dodanie swojego pojazdu. Po tym kroku kierowca otrzyma wiadomość e-mail z kodem QR, który powinien zostać umieszczony pod przednią szybą pojazdu. Od tego momentu wystarczy jedynie kupić bilet. 
+
+Istotna różni się natomiast sposób przeprowadzania kontroli. Dzięki zastosowaniu kodów QR, nie ma potrzeby ręcznego wprowadzania numeru tablicy rejestracyjnej. Osoba sprawdzająca bilet będzie musiała jedynie zeskanować za pomocą aparatu wbudowanego w telefon plakietkę, znajdująca się pod przednią szybą pojazdu. Następnie informacja zwrócona z serwera tego systemu powiadomi go o tym, czy dany samochód ma opłacony bilet postojowy.
