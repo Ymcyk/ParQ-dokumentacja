@@ -1,22 +1,71 @@
 \section*{Wstęp}
 \addcontentsline{toc}{section}{Wstęp}
 
-W największych polskich metropoliach codziennością są różnego rodzaju systemy informatyczne, wspierające miejską infrastrukturę. Ich zastosowanie obejmuje najczęściej transport publiczny, czy dotyczące tej pracy, strefy płatnego parkowania, gdzie bilet może zostać kupiony przy użyciu aplikacji na urządzenie mobilne. Popularne stało się ostatnio wprowadzanie kart miejskich, takich jak Szczecińska Karta Aglomeracyjna, integrujących wybrane systemy miejskie. Pełnią one rolę wirtualnych portmonetek, przy użyciu których można zapłacić zarówno za bilet komunikacji, jak i wypożyczyć rower miejski. 
+W największych polskich metropoliach powoli codziennością staje się korzystanie z systemów informatycznych, które swoim działaniem wspierają miejską infrastrukturę. Ich zastosowanie obejmuje
+najczęściej transport publiczny, czy dotyczące tej pracy, strefy płatnego
+parkowania, w których bilet może zostać kupiony przy użyciu aplikacji na urządzenie 
+mobilne. Popularne stało się ostatnio wprowadzanie kart miejskich, takich jak 
+Szczecińska Karta Aglomeracyjna, integrujących wybrane systemy miejskie. Pełnią 
+one rolę wirtualnych portmonetek, przy użyciu których można zapłacić zarówno za 
+bilet komunikacji, jak i wypożyczyć rower miejski. 
 
-Wdrażanie podobnych rozwiązań z pewnością nie byłoby możliwe, gdyby nie znaczący w ostatnich latach rozwój płatności elektronicznych. Dotyczą one realizowania transakcji finansowych przy użyciu elektronicznych instrumentów płatniczych i znacząco przyczyniły się do powstania alternatywnych form prowadzenia biznesu. E-commerce (ang.~handel elektroniczny) rozumiany jest jako całokształt prowadzenia działalności gospodarczej, głównie za pośrednictwem internetu, i stał się jedną z ważniejszych gałęzi gospodarki \cite{barometr_radio}. Dynamiczny rozwój e-płatności w ostatnich latach, wzajemnie napędzany był przez postęp technologiczny. Główny udział w tym miały zyskujące coraz większą popularność urządzenia mobilne, których poziom nasycenia w krajach wysoko rozwiniętych często przekracza już 100\% \cite{biblia_ebiznesu}. Szeroki zakres oferowanych w nich funkcjonalności dotyczy także płatności (tzw. m-płatności), a same smartfony bywają już nazywane instrumentami płatnicznymi. Najczęściej wykorzystywanych do niewielkich transakcji finansowych, tzw.~mikropłatności, jak chociażby zakup biletu postojowego.
+Wdrażanie podobnych rozwiązań nie byłoby możliwe, gdyby nie 
+znaczący rozwój płatności elektronicznych. Dotyczą one 
+realizowania transakcji finansowych przy użyciu elektronicznych instrumentów 
+płatniczych. Przyczyniły się do powstania 
+nowych form prowadzenia biznesu, takich jak e-commerce (ang.~handel elektroniczny), który wykorzystuje różne kanały elektroniczne (internet, faks, czy telewizję), do zawarcia transakcji handlowej. W ostatnich latach stał się jedną z ważniejszych gałęzi gospodarki 
+\cite{barometr_radio}. Dynamiczny rozwój e-płatności 
+wzajemnie napędzany był przez postęp technologiczny, a główny udział w tym miały 
+zyskujące coraz większą popularność urządzenia mobilne. Szeroki zakres oferowanych w nich funkcjonalności 
+dotyczy także płatności (tzw. m-płatności), a same smartfony bywają już 
+zaliczane do instrumentów płatniczych. Najczęściej są wykorzystywane do 
+niewielkich transakcji finansowych, tzw.~mikropłatności, jak chociażby zakup 
+biletu postojowego.
 
-Temat pracy został wybrany, ze względu na chęć rozwinięcia już istniejących systemów płatności w strefie płatnego parkowania o kody QR, które mają posłużyć do identyfikacji pojazdów. Realizacja zadań praktycznych wymaga zapoznania się z nowymi narzędziami oraz technologiami, takimi jak: tworzenie aplikacji internetowych oraz mobilnych i ich integracji z systemami płatności. Związana z tym możliwość zyskania nowych umiejętności też miała wpływ na podjęcie wyboru.
+Temat pracy został wybrany ze względu na chęć rozwinięcia już istniejących 
+systemów płatności w strefie płatnego parkowania o kody QR. Realizacja zadań praktycznych wymaga zapoznania się 
+z nowymi narzędziami oraz technologiami, takimi jak: tworzenie aplikacji 
+internetowych oraz mobilnych i ich integracji z systemami płatności. Związana z 
+tym możliwość zyskania nowych umiejętności też miała wpływ na wybór tematu.
 
-Celem tej pracy jest stworzenie systemu dla strefy płatnego parkowania, który  umożliwia zarówno kupno, jak i kontrolę biletu postojowego, z wykorzystaniem urządzeń mobilnych oraz kodów QR.
+Celem tej pracy jest stworzenie systemu płatności dla strefy płatnego 
+parkowania, który umożliwia kupno i kontrolę biletu postojowego z 
+wykorzystaniem urządzeń mobilnych oraz kodów QR.
 
-Utworzony w ramach tej pracy system dla strefy płatnego parkowania, nazwany został ParQ. Zadania, które należało wykonać w jego zakresie, obejmowały napisanie aplikacji internetowej oraz osobnych aplikacji mobilnych dla kierowcy oraz kontrolera. Cała interakcja użytkownika z systemem odbywa się za pośrednictwem urządzenia mobilnego. Tam ma możliwość zarejestrowania, dodania pojazdu, czy zakupu biletu. Przed tym musi jednak zostać doładowane konto, z którym powiązana jest wirtualna portmonetka, co także realizowane jest z poziomu aplikacji mobilnej. Z każdym pojazdem powiązany jest numer identyfikacyjny UUID, który przedstawiony w postaci kodu QR zostaje następnie umieszczany za przednią szybą pojazdu. Kontroler skanując taką plakietkę aparatem urządzenia mobilnego z zainstalowaną aplikacją, zyskuje informację o ważności biletu.
+Systemowi informatycznemu, który powstał w ramach tej pracy, została nadana 
+nazwa ParQ. Najważniejsze zadania jakie należało zrealizować, 
+dotyczyły implementacji części serwerowej oraz dwóch aplikacji mobilnych -- dla 
+kontrolerów oraz kierowców. Interakcja użytkownika z systemem odbywa się 
+jedynie za pośrednictwem urządzenia mobilnego, w którym ma on możliwość 
+utworzenia konta, dodania pojazdu, czy zakupu biletu. Z każdym pojazdem 
+powiązany jest specjalny numer identyfikacyjny, który następnie zostaje 
+przedstawiony w postaci kodu QR. Do przeprowadzenia kontroli wystarczy 
+zeskanowanie go za pomocą wbudowanego w telefon aparatu.
 
-W rozdziale 1 został poruszony temat płatności elektronicznych. Celem tej części jest wprowadzenie czytelnika do omawianego zjawiska. Pokrótce przedstawiono historię oraz etapy rozwoju, poddano analizie przyczyny coraz większej popularności e-płatności, a także ich wpływ na gospodarkę, czy modyfikację obecnych modeli biznesowych. Duży nacisk został położony na zaprezentowanie różnych form płatności internetowych, razem z przedstawieniem ich wad oraz zalet. Na końcu opisane są bramki płatności online.
+Cała praca została podzielona na pięć rozdziałów. W rozdziale 1. został 
+poruszony temat płatności elektronicznych. Celem tej części jest wprowadzenie 
+czytelnika do omawianego tematu. Pokrótce przedstawiono historię oraz etapy 
+rozwoju, poddano analizie przyczyny coraz większej popularności e-płatności, a 
+także ich wpływ na gospodarkę, czy modyfikację obecnych modeli biznesowych. 
+Duża część rozdziału została poświęcona na zaprezentowanie różnych form 
+płatności internetowych, razem z przedstawieniem ich wad oraz zalet. W końcowej 
+części znajduje się opis zasad działania Strefy Płatnego Parkowania w 
+Szczecinie, według których został stworzony system ParQ. Przedstawiono m.in. 
+sposób w jaki naliczane są opłaty za postój. Omówione zostały także podobne 
+systemy wspierające korzystanie ze stref parkowania, wykorzystujące aplikacje 
+mobilne.
 
-Rozdział 2 zawiera informacje o technologiach i narzędziach, które zostały użyte do realizacji celu pracy. Pierwszy podrozdział poświęcony jest kodom graficznym QR, używanych przy identyfikacji pojazdów w systemie. Tam dokonano ich podziału, ze względu na wersje, typ przechowywanych danych oraz poziom korekcji błędów. Następna część rozdziału opisuje architekturę REST, której zalecenia zostały wykorzystane do komunikacji urządzeń mobilnych z serwerem w systemie. Dalszy fragment poświęcony jest systemowi Android. To właśnie dla niego wykonana została część mobilna pracy. Natomiast do implementacji aplikacji internetowej użyto frameworka Django, który opisany jest na końcu rozdziału. 
+Rozdział 2. zawiera informacje o technologiach i narzędziach, które zostały 
+użyte do realizacji celu pracy. Pierwszy podrozdział poświęcony jest kodom 
+graficznym QR, używanych przy identyfikacji pojazdów w systemie. W tej części 
+dokonano ich podziału, ze względu na wersje, typ przechowywanych danych oraz 
+poziom korekcji błędów. Następna część rozdziału opisuje architekturę REST, 
+której zalecenia zostały wykorzystane do komunikacji urządzeń mobilnych z 
+serwerem w systemie. Dalszy fragment poświęcony jest systemowi Android, dla 
+którego wykonana została część mobilna. Opisany tu został także  
+framework Django, wykorzystany do implementacji aplikacji internetowej. Na końcu przedstawiony został PayPal, czyli usługodawca płatności online. 
 
-W rozdziale 3 znajdują się informacje na temat Strefy Płatnego Parkowania w Szczecinie, z którą system ParQ jest zgodny. Tutaj opisano sposób w jaki naliczane są opłaty za postój. Przedstawione zostały także podobne systemy do tworzonego w ramach tej pracy, które pozwalają na kupienie biletu za pośrednictwem urządzeń mobilnych.
+W kolejnym 3. rozdziale zawarta została dokumentacja techniczna. Na początku przedstawiony został szczegółowy sposób działania systemu, a następnie wymieniono jego wymagania funkcjonalne i niefunkcjonalne. Kolejny podrozdział zawiera diagramy UML, w tym diagramy przypadków użycia, pakietów, klas, aktywności i sekwencji. Ostatnia część opisuje API (ang. Application Programming Interface), za pomocą którego aplikacja mobilna komunikuje się 
+z serwerem, w tym zostały przedstawione także przykładowe zapytania oraz odpowiedzi.
 
-W rozdziale 4 zawarta została cała dokumentacja techniczna. Na początku przedstawiony został sposób, w jaki system działa. Następnie wymienione są wymagania funkcjonalne oraz niefunkcjonalne. Kolejny podrozdział to diagramy UML, w tym diagramy przypadków użycia, pakietów, klas, aktywności i sekwencji. Ostatnia część opisuje api, za pomocą którego aplikacja mobilna komunikuje się z serwerem. Przedstawione zostały tam przykładowe zapytania oraz odpowiedzi.
-
-Ostatni rozdział 5 opisuje szczegóły dotyczące implementacji systemu, z podziałem na część mobilną oraz serwerową. Zaprezentowano tam też fragmenty kodu, realizujące wybrane funkcjonalność. Dalsza część zawiera wyniki działania systemu, czyli zrzuty ekranu działających aplikacji mobilnych oraz internetowej. Tutaj opisane są też sposoby, jakimi testowano oprogramowanie oraz środowiska i edytory użyte do jego pisania.
+Ostatni rozdział opisuje szczegóły implementacji systemu, z podziałem na część mobilną oraz serwerową. Zaprezentowano w nim fragmenty kodu, realizujące wybrane funkcjonalności. Dalsza część zawiera wyniki działania systemu oraz sposoby testowania, środowiska programistyczne i edytory tekstowe użyte do pisania kodu.

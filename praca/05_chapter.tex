@@ -2,17 +2,14 @@
 
 \section{Implementacja systemu}
 
-W tym rozdziale opisana została implementacja systemu. Na początku omówiono sposób działania aplikacji internetowej oraz mobilnej na przykładowych fragmentach kodu. Dalsza część zawiera wyniki działania systemu, w tym zrzuty ekranu aplikacji mobilnej. Na końcu znajdują się metody testowania systemu oraz środowiska programistyczne i edytory wykorzystane do realizacji zadań pracy.
+W tym rozdziale zawarte są szczegóły implementacji systemu dla wybranych funkcjonalności, do przedstawienia których posłużono się fragmentami kodów źródłowych. Następnie na zrzutach ekranu zaprezentowane zostały wyniki działania systemu. Koniec rozdziału poświęcony został sposobom testowania, a także opisowi wykorzystanych środowisk programistycznych i edytorów kodu.
 
 \subsection{Aplikacja internetowa}
 
-Główne zadania jakie były do zrealizowania podczas implementacji serwera, to: autoryzacja, zarządzanie i identyfikowanie pojazdów, kupno oraz kontrola biletu postojowego. Aby te funkcjonalności mogły być osiągalne dla aplikacji mobilnej, konieczne jest udostępnienie zasobów poprzez adresy URL. W Django razem z projektem tworzony jest plik urls.py, gdzie są one umieszczane w liście urlpatterns. Każda pozycja to wywołanie funkcji ulr(), która jako pierwszy argument przyjmuje wyrażenie regularne z adresem, a jako drugi widok, który obsługuje żądanie.
-\\
-\\
-Na listingu \ref{parq_urls} zaprezentowany jest fragment kodu z pliku urls.py, ze wszystkimi adresami na jakie swoje żądania wysyła aplikacja mobilna. W zależności od realizowanych zadań, przyjmują wybrane metody protokołu HTTP.
+Do głównych zadań serwera należą: autoryzacja, zarządzanie i identyfikowanie pojazdów, kupno oraz kontrola biletu postojowego. Wszystkie funkcjonalności udostępniane są aplikacji mobilnej poprzez API w postaci adresów URL. Wysyłając żądanie na jeden z nich, aplikacja otrzyma w odpowiedzi dokument JSON. W Django, czyli frameworku użytym do implementacji części serwerowej systemu, miejscem przeznaczonym do mapowania adresu na widok jest plik urls.py. Jego fragment został zaprezentowany na listingu \ref{parq_urls}. W tym miejscu znajdują się także wszystkie adresy w systemie, na jakie aplikacja mobilna będzie wysyłać swoje żądania.
 
 \begin{singlespace}
-	\captionof{listing}{Mapowane adresy URL z pliku urls.py}
+	\captionof{listing}{Mapowane adresy URL z pliku urls.py.}
 	\label{parq_urls}
 	\vspace{0.3cm}
 	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/urlpatterns.py}
@@ -20,10 +17,10 @@ Na listingu \ref{parq_urls} zaprezentowany jest fragment kodu z pliku urls.py, z
 
 \subsubsection*{Tworzenie konta i autoryzacja}
 
-Z procesem utworzenia konta w systemie przez kierowcę lub kontrolera związanych jest kilka dodatkowych czynności. Są to przypisanie roli oraz generowanie tokenu autoryzacyjnego. Wszyscy użytkownicy tworzeni są w oparciu o istniejący już w Django model użytkownika -- User, z modułu django.contrib.auth.models. Niezbędny jest jednak sposób, który pozwoli na odróżnienie kierowcy od kontrolera, aby można było nadać im odmienne uprawnienia. Do tego celu wykorzystany został dodatek djroles, napisany specjalnie na potrzeby tego systemu. Swoje działanie opiera na istniejących w Django grupach, z którymi domyślnie użytkownicy są w relacji wiele-do-wielu. Dodatek ten tworzy dodatkową tabelę -- Role, w której umieszczane są wybrane grupy. Spośród nich, użytkownik będzie mógł należeć tylko do jednej, w tym samym czasie. Na listingu \ref{driver} pokazany został sposób, w jaki są deklarowane grupy, które będą używane do tworzenia ról. Jest to robione poprzez zadeklarowanie klasy Pythona, która dziedziczy po BaseRole - jej nazwa zostanie użyta do utworzenia grupy. Jako że ten język dopuszcza wielodziedziczenie, wykorzystany został model Driver oraz Officer, dzięki czemu grupa posiada tę samą nazwy co tabele z dodatkowymi informacjami kierowcy i kontrolera.
+Z procesem utworzenia konta w systemie przez kierowcę i kontrolera związanych jest kilka dodatkowych czynności, którymi są przypisanie roli oraz generowanie tokenu autoryzacyjnego. Wszyscy użytkownicy tworzeni są w oparciu o istniejący już w Django model użytkownika -- User, z modułu django.contrib.auth.models. Niezbędny jest jednak sposób, który pozwoli na odróżnienie kont kierowcy i kontrolera, aby można było nadać im odmienne uprawnienia. Do tego celu wykorzystany został dodatek djroles, napisany specjalnie na potrzeby tego systemu. Swoje działanie opiera na istniejących w Django grupach, z którymi domyślnie użytkownicy są w relacji wiele-do-wielu, czyli mogą należeć do kilku grup jednocześnie. Jego zadaniem jest umożliwienie wybrania zestawu grup, spośród których użytkownik może należeć tylko do jednej w tym samym czasie. Do tego celu tworzona jest tabela pomocnicza -- Role, w której umieszczane będą grupy, nazywane dalej rolami. Na listingu \ref{driver} pokazany został sposób, w jaki deklarowane są grupy, które będą używane do tworzenia ról. Jest to robione poprzez napisanie klasy Pythona, która dziedziczy po BaseRole - nazwa utworzonej roli będzie pokrywać się z nazwą klasy. Dzięki możliwemu wielodziedziczeniu w tym języku, do tego celu mogą zostać wykorzystane zdefiniowane wcześniej modele.
 
 \begin{singlespace}
-	\captionof{listing}{Fragment modelu Driver}
+	\captionof{listing}{Fragment modelu Driver.}
 	\label{driver}
 	\vspace{0.3cm}
 	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/driver.py}
@@ -31,10 +28,10 @@ Z procesem utworzenia konta w systemie przez kierowcę lub kontrolera związanyc
 
 \vspace{0.3cm}
 
-Poza przypisaniem grupy, każdy użytkownik w systemie, niezależnie już od pełnionej roli, musi mieć wygenerowany token autoryzacyjny. Obie te czynności realizowane są przez sygnały (ang. signals), dostępne w Django. Są to funkcje, które zostaną wykonane w odpowiedzi na jakieś zdarzenie związane z ustaloną klasą w projekcie. Na listingu \ref{sygnaly} przedstawione zostały sygnały powiązane z domyślną klasą użytkownika User (tworzenie tokenu) oraz klasami Driver i Officer -- przypisywanie do ról. Wykonywane są w odpowiedzi na zapisanie modelu w bazie danych, czyli sygnał post\_save.
+Poza przypisaniem grupy, każdy użytkownik w systemie, niezależnie już od pełnionej roli, musi posiadać wygenerowany token autoryzacyjny. Obie te czynności muszą zostać wykonane w momencie utworzenia konta. Zostało to zrealizowane poprzez sygnały (ang. signals) dostępne w Django. Są to funkcje, które zostaną wykonane w odpowiedzi na jakieś zdarzenie związane z ustaloną klasą w projekcie. Na listingu \ref{sygnaly} przedstawione zostały sygnały powiązane z domyślną klasą użytkownika User (tworzenie tokenu) oraz klasami Driver i Officer (przypisywanie do ról). Wykonywane są w odpowiedzi na zapisanie modelu w bazie danych, czyli sygnał post\_save.
 
 \begin{singlespace}
-	\captionof{listing}{Sygnały związane z tworzeniem konta w systemie}
+	\captionof{listing}{Sygnały związane z tworzeniem konta w systemie.}
 	\label{sygnaly}
 	\vspace{0.3cm}
 	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/token_signal.py}
@@ -42,10 +39,10 @@ Poza przypisaniem grupy, każdy użytkownik w systemie, niezależnie już od pe�
 
 \subsubsection*{Identyfikacja pojazdów}
 
-Z każdym pojazdem kierowcy w systemie powiązany jest identyfikator UUID (ang. Universally unique identifier), czyli 128-bitowa losowa wartość. Przechowywana jest ona w modelu Badge (listing \ref{model_badge}), powiązanym relacją jeden-do-jeden z pojazdem (Vehicle). W modelu znajduje się także metoda generate\_image(). W niej właśnie utworzony zostanie kod QR, w którym zakodowany będzie identyfikator. Do generowania QR w postaci pliku png, użyta została biblioteka Pythona qrcode. Oprócz danych, podawany jest także poziom korekcji błędów i wersja kodu.
+Z każdym pojazdem kierowcy w systemie powiązany jest identyfikator UUID (ang. Universally unique identifier), czyli 128-bitowa losowa wartość. Przechowywana jest ona w modelu Badge (listing \ref{model_badge}), powiązanym relacją jeden-do-jeden z pojazdem (Vehicle). W modelu znajduje się także metoda generate\_image(), która odpowiedzialna jest za generowanie kodu QR, w którym zakodowany będzie identyfikator. W niej wykorzystywane są funkcje pochodzące z zewnętrznej biblioteki Pythona -- qrcode. Oprócz danych, podawany jest także poziom korekcji błędów i wersja kodu.
 
 \begin{singlespace}
-	\captionof{listing}{Badge - model identyfikatora}
+	\captionof{listing}{Badge - model identyfikatora.}
 	\label{model_badge}
 	\vspace{0.3cm}
 	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/badges-badge.py}
@@ -53,14 +50,14 @@ Z każdym pojazdem kierowcy w systemie powiązany jest identyfikator UUID (ang. 
 
 \vspace{0.3cm}
 
-Utworzony w ten sposób kod QR jest następnie wysyłany na e-maila, podanego przez kierowcę podczas rejestracji. Umieszczony w widocznym miejscu pojazdu, będzie używany przez kontrolera podczas sprawdzania biletu.
+Utworzony w ten sposób kod QR jest następnie wysyłany na e-maila podanego przez kierowcę podczas rejestracji. Umieszczony w widocznym miejscu pojazdu, będzie skanowany przez kontrolera podczas sprawdzania biletu.
 
 \subsubsection*{Taryfikator}
 
-Taryfikator oprócz powiązanych ze sobą opłat, musi zawierać także informację o czasie w którym obowiązuje, zarówno godzin jak i konkretnej daty w kalendarzu. Dobrym rozwiązaniem jest umożliwienie ustawienia także takiej daty jako cyklicznej, dzięki czemu dany taryfikator mógłby obowiązywać np.: co tydzień w sobotę. Taką możliwość daje klasa Event, z dodatku django-scheduler. Pozwala ona na stworzenie wydarzenia z datą początkową oraz końcową, która będzie przechowywana w bazie danych. Dodatkowo takie wydarzenie może być cykliczne, a podane daty wyznaczać będą wtedy dzień tygodnia, czy miesiąca. Model Schedule rozszerza Event, dzięki czemu taryfikator posiada zarówno opłaty jak i czas obowiązywania. Na listingu \ref{schedule-create} przedstawiono przykład jego tworzenia.
+Taryfikator oprócz powiązanych ze sobą opłat, musi zawierać także informację o czasie w którym obowiązuje. Taką możliwość daje klasa Event, pochodząca z dodatku django-scheduler. Pozwala ona na stworzenie wydarzenia z datą początkową oraz końcową, a dzięki klasie Rule, istnieje możliwość jego powtarzania np.: co tydzień. Model Schedule rozszerza Event, dzięki czemu  przetrzymuje informacje zarówno o opłatach, jak i czasie swojego obowiązywania. Dzięki możliwości tworzenia wydarzeń cyklicznych, może zostać ustawiony na wybrany dzień tygodnia. Na listingu \ref{schedule-create} przedstawiono przykład jego tworzenia.
 
 \begin{singlespace}
-	\captionof{listing}{Tworzenie cotygodniowego taryfikatora}
+	\captionof{listing}{Tworzenie cotygodniowego taryfikatora.}
 	\label{schedule-create}
 	\vspace{0.3cm}
 	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/schedule-create.py}
@@ -69,37 +66,42 @@ Taryfikator oprócz powiązanych ze sobą opłat, musi zawierać także informac
 
 \subsubsection*{Kupno biletu}
 
-Oprócz pojazdu na jaki ma zostać zakupiony bilet, użytkownik podaje także parking, który razem z datą rozpoczęcia postoju wyznacza obowiązujący taryfikator. Podobnie jak w Strefie Płatnego Parkowania w Szczecinie, cena może się zmieniać w zależności od długości parkowania. Na listingach \ref{calculate-schedule} i \ref{calculate-charge} przedstawione zostały algorytmy naliczające opłatę. W klasie Schedule najpierw wyznaczany jest efektywny czas postoju, w przypadku gdyby podany bilet wykraczał poza datę obowiązywania taryfikatora. Po przedstawieniu czasu trwania postoju w postaci minut, pobierane są wszystkie opłaty powiązane z danym taryfikatorem. Następnie w pętli, aż do wyczerpania ilości minut postoju, każda z opłat nalicza swoją część ceny (model Charge), zgodnie z jej czasem obowiązywania. W przypadku wyczerpania listy opłat przed zakończeniem postoju, ostatnia z nich (tak jak w SPP w Szczecinie) naliczy cenę dla pozostałych minut postoju. W pętli wszystkie opłaty cząstkowe są sumowane i ta właśnie suma zostanie naliczona jako opłata kierowcy.
+Za obliczenie kosztu biletu odpowiedzialne są fragmenty kodu przedstawione na listingach \ref{calculate-schedule} i \ref{calculate-charge}. Bazują na zasadzie naliczania opłaty stosowanej w szczecińskiej Strefie Płatnego Parkowania, w której stawki zmieniają się w zależności od długości postoju. W klasie Schedule obliczany jest najpierw czas trwania parkowania w minutach. Następnie po pobieraniu wszystkich opłat, w pętli każda z nich nalicza swoją część ceny (model Charge) zgodnie z jej czasem obowiązywania. W przypadku wyczerpania listy opłat przed zakończeniem postoju, ostatnia z nich (tak jak w SPP w Szczecinie) naliczy cenę dla pozostałych minut postoju. W pętli wszystkie opłaty cząstkowe są sumowane, wyznaczając w ten sposób koszt biletu.
 
 \begin{singlespace}
-	\captionof{listing}{Obliczanie łącznej kwoty w klasie Schedule}
+	\captionof{listing}{Obliczanie łącznej kwoty w klasie Schedule.}
 	\label{calculate-schedule}
 	\vspace{0.3cm}
 	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/schedule-calculate_price.py}
 \end{singlespace}
 
 \begin{singlespace}
-	\captionof{listing}{Obliczanie częstki ceny w pojedynczej opłacie - model Charge}
+	\captionof{listing}{Obliczanie częstki ceny w pojedynczej opłacie - model Charge.}
 	\label{calculate-charge}
 	\vspace{0.3cm}
 	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/charge-calculate_price.py}
 \end{singlespace}
 
+\vspace{0.3cm}
+
+Obliczanie opłaty za postój następuje w momencie kupowania biletu, po czym portmonetka użytkownika zostanie obciążona odpowiednią kwotą. Jeśli nie posiada on wystarczającej ilości pieniędzy, bilet nie może zostać kupiony.
+
 \subsubsection*{Doładowanie konta}
 
 %TODO sprawdzaj czy podane linie się zgadzają!
-Doładowywanie konta odbywa się dwustopniowo. Najpierw w aplikacji mobilnej użytkownik przelewa swoje pieniądze (np.:~z wykorzystaniem karty płatniczej) na konto PayPal'a powiązane z systemem. Zwrócony identyfikator transakcji wysyłany jest metodą POST do serwera systemu ParQ, na adres payments/. W widoku przedstawionym na listingu \ref{payments_list}, obsługującym ten adres, przedstawiony jest fragment kodu odpowiedzialny za to żądanie. W linii 12 wywoływana jest metoda, w której otrzymany identyfikator przesyłany zostaje do serwera PayPal'a, celem uzyskania informacji o kwocie jaka została przelana. Następnie, jeśli wszystko się zgadza, numer transakcji zapisywany jest w bazie danych (linia 13). Gdy transakcja o takim identyfikatorze już istnieje, zwrócony zostanie w odpowiedzi błąd. Tylko w razie powodzenia wykonana będzie następna linia, gdzie powiązana portmonetka użytkownika jest uzupełniana o wpłaconą kwotę.
+Doładowywanie konta odbywa się dwuetapowo. Najpierw w aplikacji mobilnej użytkownik przelewa pieniądze za pomocą bramki płatności PayPal. W przypadku powodzenia transakcji zwrócony zostanie jej identyfikator, który wysyłany jest do serwera systemu ParQ. Na listingu \ref{payments_list} przedstawiony został widok odpowiedzialny za to żądanie. W linii 12 wywoływana jest metoda, w której otrzymany od aplikacji mobilnej identyfikator, przesyłany zostaje do serwera PayPal'a, celem uzyskania informacji o kwocie jaka została przelana. Następnie jeśli wszystko się zgadza, numer transakcji zapisywany jest w bazie danych (linia 13). Gdyby transakcja o takim identyfikatorze już istniała, doładowywanie zostanie przerwane. Tylko w razie powodzenia wykonany będzie dalszy fragment kodu, gdzie powiązana portmonetka użytkownika jest uzupełniana o wpłaconą kwotę.
 
 \begin{singlespace}
-	\captionof{listing}{payment\_list - widok doładowania konta użytkownika}
+	\captionof{listing}{payment\_list - widok doładowania konta użytkownika.}
 	\label{payments_list}
 	\vspace{0.3cm}
 	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/paypal-views.py}
 \end{singlespace}
 
 \vspace{0.3cm}
-
+%TODO pamiętać, żeby było razem z tym na dole
 Do realizacji tej części pracy wykorzystano kilka dodatków do Django oraz jeden dodatkowy pakiet Pythona, a są to:
+
 \begin{itemize}
 	\item Django REST Framework -- na jego podstawie tworzone są widoki, które obsługują żądania w architekturze REST. Ten dodatek umożliwia także autoryzacje żądań, opartą na generowanym wcześniej tokenie.
 	\item django-scheduler -- tworzenie wydarzeń, które mogą się powtarzać cyklicznie.
@@ -111,33 +113,37 @@ Do realizacji tej części pracy wykorzystano kilka dodatków do Django oraz jed
 
 \subsection{Aplikacje mobilne}
 
-W ramach pracy zostały wykonane dwie oddzielne aplikacje dla kierowcy oraz kontrolera, ze względu na odmienny sposób w jaki korzystają oni z systemu. Kierowca oprócz logowania, powinien móc m.in. założyć konto, czy dokonać płatności przy doładowywaniu konta. Kontroler w swojej aplikacji powinien mieć możliwość przeprowadzenia kontroli biletów postojowych, co odbywa się poprzez odczytanie plakietki z kodem QR. Do każdej z tych aplikacji zalogować może się jedynie użytkownik posiadający konto, do którego została przypisana odpowiednia rola. Obie wymagają ciągłej komunikacji z serwerem.
+W ramach pracy zostały wykonane dwie oddzielne aplikacje mobilne -- dla kierowcy oraz kontrolera. Kierowca oprócz logowania, może założyć konto, czy dokonać płatności celem doładowywania portmonetki. Kontroler w swojej aplikacji może skanować plakietki z kodem QR, aby przeprowadzić kontrolę biletu. Do każdej z tych aplikacji zalogować może się jedynie użytkownik posiadający konto, do którego została przypisana odpowiednia rola. Obie wymagają ciągłej komunikacji z serwerem.
 
 \subsubsection*{Parsowanie danych}
 
-Format JSON składa się z par danych - z każdą wartością związany jest klucz, który służy do jej identyfikacji. Przechowywana wartość może być ciągiem znaków, liczą całkowitą i zmiennopozycyjną, ale także obiektem zawierającym dalszy zestaw par (otoczonym nawiasami klamrowymi) lub tablicą takich obiektów (nawiasy klamrowe). JSON przesyłany jest jako tekst w części danych żądania lub odpowiedzi HTTP. W celu wydobycia informacji musi być poddany odpowiedniej analizie, zarówno na serwerze jak i aplikacji mobilnej. W Androidzie parsowanie można wykonać za pomocą klas JSONObject oraz JSONArray z pakietu org.json 
+Format JSON jest obecnie najpopularniejszym formatem, wykorzystywanym do wymiany danych w architekturze REST. Wszystkie dane to zmienne, a ich nazwy są otoczone cudzysłowami. Wartości mogą być typu string (ciąg znaków), liczbami całkowitymi i zmiennopozycyjnymi, a także tablicami w których skład wchodzą wymienione wyżej zmienne, bądź obiektem JSON. Obiekty i tablice nie mają żadnych ograniczeń, jeśli chodzi o ich zagnieżdżanie. W celu wydobycia informacji, JSON musi być poddany odpowiedniej analizie, zarówno na serwerze jak i aplikacji mobilnej. W Androidzie parsowanie można wykonać za pomocą klas JSONObject oraz JSONArray z pakietu org.json. Ta druga służy do analizy tablic danych. 
 \\
 \\
-JSONObject umożliwia parsowanie pojedynczego jsona, a dane do analizy podawane są jako ciąg znaków (String) w konstruktorze. Metody instancji tej klasy służące do wydobywania wartości, jako parametr przyjmują nazwę klucza z jakim ta wartość jest związana. Są to m.in: get(), getInt(), czy getString(), a ich użycie zależy od spodziewanego typu wartości przechowywanego w dokumencie. Istnieje także metoda getJSONObject(), która zwraca zagnieżdżony obiekt jsona w postaci instancji klasy JSONObject. JSONArray instancjonowana jest w podobny sposób, a używana jest w przypadku gdy json zawiera tablicę danych. Po wywołaniu metody getJSONObject() z indeksem elementu w parametrze, zwracany jest obiekt pojedynczego jsona, czyli klasy JSONObject. Na listingu \ref{parsowanie} znajduje się przykład z wykorzystaniem kolekcji danych.
+JSONObject umożliwia parsowanie pojedynczego JSONa, a dane do analizy podawane są jako ciąg znaków (String) w konstruktorze. Metody tej klasy służące do wydobywania wartości, jako parametr przyjmują nazwę klucza z którym ta wartość jest związana. Są to m.in get(), getInt(), czy getString(), a ich użycie zależy od spodziewanego typu wartości przechowywanego w dokumencie. Istnieje także metoda getJSONObject(), która zwraca zagnieżdżony obiekt JSONa w postaci instancji klasy JSONObject. JSONArray instancjonowana jest w podobny sposób. Po wywołaniu metody getJSONObject() z indeksem elementu w parametrze, zwracany jest obiekt pojedynczego JSONa, czyli klasy JSONObject. Na listingu \ref{parsowanie} znajduje się przykład z wykorzystaniem kolekcji danych.
+
+\newpage
 
 \begin{singlespace}
-	\captionof{listing}{Parsowanie jsona dla kolekcji pojazdów kierowcy}
+	\captionof{listing}{Parsowanie jsona dla kolekcji pojazdów kierowcy.}
 	\label{parsowanie}
 	\vspace{0.3cm}
 	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/parsowanie-json.java}
 \end{singlespace}
 
-Ten fragment kodu zostaje wykonany, w momencie otrzymania z serwera pojazdów powiązanych z danym kierowcą. Dla każdego elementu tablicy json wydobywany jest obiekt klasy JSONObject, z którego pobierane są dane pojazdu. Zostaną one później zaprezentowane użytkownikowi w odpowiednim widoku.
+\vspace{0.3cm}
+
+Ten fragment kodu zostaje wykonany w momencie otrzymania z serwera listy pojazdów powiązanych z danym kierowcą. Dla każdego elementu tablicy JSON wydobywany jest obiekt klasy JSONObject, z którego pobierane są dane pojazdu. Zostają one później zaprezentowane użytkownikowi w odpowiednim widoku.
 
 \subsubsection*{Komunikacja z serwerem}
 
-Komunikacja w systemie polega na wysyłaniu żądań przez aplikacje do serwera i oczekiwaniu na rezultat, który zostanie przesłany w odpowiedzi. Tym zajmuje się biblioteka HTTP -- Volley. Stanowi alternatywę dla wykorzystywanych wcześniej klas Javy, jak HttpURLConnection, będąc rozwiązaniem dedykowanym dla Androida, cechującym się prostotą i szybkością działania. Świetnie nadaje się do prostych API, w których wymiana informacji polega na przesyłaniu list oraz pojedynczych danych w formacie json. Jedną z jej głównych zalet jest zdolność do buforowania odpowiedzi. Jeśli zapytanie może zostać obsłużone dzięki danych znajdującym się w pamięci podręcznej, nie będzie ono musiało zostać ponownie wysłane.
+Komunikacja w systemie polega na wysyłaniu żądań przez aplikacje do serwera i oczekiwaniu na rezultat, który zostanie przesłany w odpowiedzi. Tym zajmuje się biblioteka do komunikacji HTTP -- Volley. Stanowi alternatywę dla wykorzystywanych wcześniej klas Javy, jak HttpURLConnection, będąc rozwiązaniem dedykowanym dla Androida, cechującym się prostotą i szybkością działania. Świetnie nadaje się do prostych API, w których wymiana informacji polega na przesyłaniu list oraz pojedynczych danych w formacie JSON. Jedną z jej głównych zalet jest zdolność do buforowania odpowiedzi. Jeśli zapytanie może zostać obsłużone dzięki danym znajdującym się w pamięci podręcznej, nie będzie ono musiało zostać ponownie wysłane.
 \\
 \\
-Listing \ref{volley} przedstawia sposób, w jaki konstruowane są zapytania w tej bibliotece. Najpierw w konstruktorze podawany jest rodzaj metody HTTP oraz adres, na jaki żądanie będzie miało zostać wysłane. Dwa następne parametry to obiekty klas anonimowych. Jeśli odpowiedz z serwera będzie zwrócona z kodem 2xx, to wykonana zostanie metoda onResponse() pierwszego obiektu. Parametr response zawiera dane odpowiedzi i to właśnie on będzie poddawaniu parsowaniu. Jeśli odpowiedz jest błędna, czyli wysłana została z kodem 4xx lub 5xx, wykonana zostanie onErrorResponse. Tak utworzone zapytanie dodawane jest do kolejki zapytań, gdzie kolejność wysłania może być zależna od ustawionego priorytetu.
+Listing \ref{volley} przedstawia sposób, w jaki konstruowane są zapytania w tej bibliotece. Najpierw w konstruktorze podawany jest rodzaj metody HTTP oraz adres, na jaki żądanie ma zostać wysłane. Dwa następne parametry to obiekty klas anonimowych. Jeśli odpowiedz z serwera będzie zwrócona z kodem HTTP oznaczającym powodzenie operacji (2xx), to wykonana zostanie metoda onResponse() pierwszego obiektu. Parametr response zawiera dane odpowiedzi i to właśnie on będzie poddawaniu parsowaniu. Jeśli odpowiedz jest błędna, czyli wysłana została z kodem błędu (4xx lub 5xx), wywołana będzie onErrorResponse(). Tak utworzone zapytanie dodawane jest do kolejki zapytań, w której moment wysłania zależy od priorytetu jaki został nadany.
 
 \begin{singlespace}
-	\captionof{listing}{Wysłanie żądania}
+	\captionof{listing}{Wysłanie żądania.}
 	\label{volley}
 	\vspace{0.3cm}
 	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/scan-activity.java}
@@ -145,57 +151,57 @@ Listing \ref{volley} przedstawia sposób, w jaki konstruowane są zapytania w te
 
 \subsubsection*{Realizacja płatności}
 
-Do integracji PayPal'a z aplikacją mobilną została wykorzystana biblioteka PayPal Android SDK, która jest dostępna w ramach open source. Razem z nią, oprócz możliwości realizacji opłat, udostępniane są także gotowe ekrany, gdzie użytkownik może podać swoje dane uwierzytelniające. Biblioteka ta pozwala na realizowanie płatności pojedynczych (tzw. Single Payment, użytkownik za każdym razem musi podawać dane uwierzytelniające) oraz automatycznych (Future Payment, dane podawane tylko raz, a zwrócony token OAuth pozwala na dokonywanie płatności w imieniu użytkownika). W tym systemie oferowana jest tylko pierwsza opcja.
+Do integracji PayPal'a z aplikacją mobilną została wykorzystana biblioteka PayPal Android SDK, która jest dostępna w na licencji open source. Razem z nią, oprócz możliwości realizacji opłat, udostępniane są także gotowe ekrany dla aplikacji mobilnej, na których użytkownik może podać swoje dane uwierzytelniające. Biblioteka ta pozwala na realizowanie płatności pojedynczych (tzw. Single Payment, użytkownik za każdym razem musi podawać dane uwierzytelniające) oraz automatycznych (Future Payment, dane podawane tylko raz, a zwrócony token OAuth pozwala na dokonywanie płatności w imieniu użytkownika). W tworzonym systemie oferowana jest tylko pierwsza opcja.
 \\
 \\
 Na listingu \ref{paypal1} przedstawiony został fragment, w którym za pomocą intencji uruchomiona zostaje aktywność uwierzytelnienia płatności. W klasie PayPalPayment podawane zostają informacje odnośnie wysokości płatności, waluty oraz typu transakcji. Obiekt tej klasy, razem z informacjami konfiguracyjnymi, zostaje umieszczony w intencji. Wywołanie metody aktywności Androida startActivityForResult() spowoduje wyświetlenie nowego ekranu.
 
 \begin{singlespace}
-	\captionof{listing}{Intencja rozpoczynająca aktywność PayPal'a}
+	\captionof{listing}{Intencja rozpoczynająca aktywność PayPal'a.}
 	\label{paypal1}
 	\vspace{0.3cm}
 	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/get-payment.java}
 \end{singlespace}
 
+\vspace{0.3cm}
+
 Metoda startAcitvityForResult() uruchamiająca nową aktywność różni się od startActivity() tym, że od docelowej aktywności oczekiwane jest otrzymanie jakiegoś wyniku. Po zakończeniu utworzonego ekranu uruchomiona zastanie metoda onActivityResult(). Do niej właśnie przesłana zostanie odpowiedź z serwera PayPal'a o statusie przeprowadzonej płatności, a także w razie sukcesu, identyfikator płatności. W tym miejscu właśnie będzie on wysłany do serwera systemu, celem jego dalszego uwierzytelnienia.
 
 \subsubsection*{Kontrola biletu}
 
-Kontrola biletu możliwa jest w aplikacji przeznaczonej dla kontrolera. Odbywa się poprzez skanowanie obrazu z kamery wbudowanej w urządzenie mobilne. Do tego celu użyta została biblioteka ZXing ("Zebra Crossing"), która służy do przetwarzania obrazu. Oprócz QR, umożliwia także skanowanie kodów kreskowych. Domyślnie nie są dołączone do niej żadne gotowe aktywności, jak w przypadku PayPal Android SDK. Istnieje jednak dodatek, ZXing Android Embedded, którego sposób działania jest zbliżony do przeprowadzania transakcji. Zawiera on gotową aktywność, w której zostaje uruchomiona kamera urządzenia mobilnego. Na listingu \ref{platnosc} w klasie IntentIntegrator konfigurowany jest najpierw skaner. Podawany jest tam rodzaj kodów graficznych, czy orientacja ekranu. Po natrafieniu przez skaner na kod, skanowanie zostaje zakończone. Informacja jaką udało się odkodować, zwracana jest w metodzie onActivityResult().
+Kontrola biletu możliwa jest w aplikacji przeznaczonej dla kontrolera. Odbywa się poprzez skanowanie obrazu z kamery wbudowanej w urządzenie mobilne, do czego użyta została biblioteka ZXing ("Zebra Crossing"). Służy ona do przetwarzania obrazu, w celu odkodowania kodów graficznych QR i kreskowych. Domyślnie nie są dołączone do niej żadne gotowe aktywności jak w przypadku PayPal Android SDK, istnieje jednak dodatek -- ZXing Android Embedded, który takie dostarcza. Sposób działania jest dzięki niemu zbliżony do kroków, jakie należało wykonać podczas przeprowadzania transakcji. Zawiera on gotową aktywność, w której zostaje uruchomiona kamera urządzenia mobilnego. Na listingu \ref{platnosc} w klasie IntentIntegrator konfigurowany jest najpierw skaner, gdzie podawany jest rodzaj kodów graficznych jakich ma poszukiwać oraz orientacja ekranu. Po natrafieniu przez skaner na kod, skanowanie zostaje zakończone, a informacja jaką udało się odkodować zwracana jest w metodzie onActivityResult().
 
 \begin{singlespace}
-	\captionof{listing}{Intencja rozpoczynająca aktywność skanowania}
+	\captionof{listing}{Intencja rozpoczynająca aktywność skanowania.}
 	\label{platnosc}
 	\vspace{0.3cm}
 	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/start-scan.java}
 \end{singlespace}
 
-Po zeskanowaniu kodu, znajdująca się w nim informacja trafia do serwera. Tam sprawdzane jest najpierw, czy jest to poprawny identyfikator UUID. Wykorzystane do tego zostało odpowiednie wyrażenie regularne. Następnie, jeśli format jest poprawny, wykonywane są zapytania do bazy danych, mające na celu znalezienie tego kodu, powiązanego z nim pojazdu oraz biletu, który jest ważny. Jeśli wszystkie te operacje zakończą się sukcesem, kontroler otrzymuje informację o ważnym bilecie postojowym. W przypadku gdyby któryś z kroków zakończył się niepowodzeniem, konieczne będzie wystawienie mandatu. 
-
 \newpage
 
 \subsection{Wyniki działania systemu}
 
-Kierowca korzystający z systemu ParQ, oprócz logowania i rejestracji, może także doładować konto, dodawać nowe pojazdy oraz kupować bilety postojowe w przeznaczonej dla niego aplikacji. Kontroler natomiast ma możliwość przeprowadzenia kontroli zaparkowanego pojazdu z wykorzystaniem wbudowanego w telefon aparatu. Poniżej znajduje się opis funkcjonującego systemu, z zrzutami ekranów stworzonych na jego potrzeby aplikacji mobilnych oraz wynikami działania serwera.
+Kierowca korzystający z systemu ParQ, oprócz logowania i rejestracji, może także doładować konto, dodawać nowe pojazdy oraz kupować bilety postojowe w przeznaczonej dla niego aplikacji. Kontroler natomiast ma możliwość przeprowadzenia kontroli zaparkowanego pojazdu. Poniżej znajduje się opis funkcjonującego systemu, z zrzutami ekranów z aplikacji mobilnych oraz wynikami działania serwera.
 \\
 \\
-W pierwszej kolejności opisana została aplikacja przeznaczona dla kierowcy, korzystającego ze strefy płatnego parkowania. Po zalogowaniu do niej, wyświetlany jest ekran główny, znajdujący się na rys. 5.1. To tutaj użytkownik uzyskuje podstawowe dane powiązane ze swoim kontem, takie jak ilość pieniędzy znajdujących się w portmonetce, czy godziny płatnego postoju w dniu sprawdzania. Tutaj też są wyświetlane informacje o wszystkich aktywnych biletach postojowych, wraz z informacjami o pojeździe na który zostały zakupione i godziną zakończenia. Z ekranu głównego możliwe jest przejście do pozostałych ekranów aplikacji. Po naciśnięciu ikonki w lewym górnym rogu, wysuwa się menu boczne przedstawione na rys. 5.2. Na górze wyświetlana jest nazwa oraz e-mail zalogowanego użytkownika. Poniżej znajdują się opcje przenoszące do ekranów zakupu biletu, zarządzania pojazdami lub doładowywania konta.
+W pierwszej kolejności opisana została aplikacja przeznaczona dla kierowcy korzystającego ze strefy płatnego parkowania. Po zalogowaniu do niej, wyświetlany jest ekran główny, znajdujący się na rys. 5.1. To tutaj użytkownik uzyskuje podstawowe dane powiązane ze swoim kontem, takie jak ilość pieniędzy znajdujących się w portmonetce, czy godziny obowiązywania płatnego postoju. Tutaj też są wyświetlane informacje o wszystkich aktywnych biletach postojowych, wraz z informacjami o pojeździe na który zostały zakupione i godziną ich zakończenia. Z ekranu głównego możliwe jest przejście do pozostałych ekranów aplikacji. Po naciśnięciu ikonki w lewym górnym rogu, wysuwa się menu boczne przedstawione na rys. 5.2. Na górze wyświetlana jest nazwa oraz e-mail zalogowanego użytkownika. Poniżej znajdują się opcje przenoszące do ekranów zakupu biletu, zarządzania pojazdami lub doładowywania konta.
 
 \begin{figure}[h]
 	\centering
 	\begin{minipage}[b]{0.25\textwidth}
 		\includegraphics[width=\textwidth]{05/driver_dashboard3}
-		\caption{Informacje o koncie}
+		\caption{Informacje o koncie.}
 	\end{minipage}
 	%\hfill
 	\hspace{3cm}
 	\begin{minipage}[b]{0.25\textwidth}
 		\includegraphics[width=\textwidth]{05/driver_drawer}
-		\caption{Menu boczne aplikacji}
+		\caption{Menu boczne aplikacji.}
 	\end{minipage}
 \end{figure}
 
-Doładowywanie konta (rys. 5.3 i 5.4) rozpoczyna się od podania kwoty, jaką konto użytkownika w systemie ma zostać doładowane. Zatwierdzenie jej, powoduje pokazanie ekranów pochodzących z wykorzystywanej do realizacji płatności biblioteki -- PayPal Android SDK. To w nich możliwe jest wybranie metody płatności, uwierzytelnienie oraz zatwierdzenie transakcji. Po zakończeniu, użytkownik przenoszony jest na ekran główny z zaktualizowanym stanem konta.
+Doładowywanie konta (rys. 5.3 i 5.4) rozpoczyna się od podania kwoty, jaką konto użytkownika w systemie ma zostać doładowane. Zatwierdzenie jej, powoduje pokazanie ekranów pochodzących z wykorzystywanej do realizacji płatności biblioteki -- PayPal Android SDK. Umożliwia ona wybranie metody płatności, uwierzytelnienie oraz zatwierdzenie transakcji. Po zakończeniu, użytkownik przenoszony jest na ekran główny, z zaktualizowanym stanem konta.
 
 \newpage
 
@@ -203,13 +209,13 @@ Doładowywanie konta (rys. 5.3 i 5.4) rozpoczyna się od podania kwoty, jaką ko
 	\centering
 	\begin{minipage}[b]{0.25\textwidth}
 		\includegraphics[width=\textwidth]{05/driver_doladowanie}
-		\caption{Pole z kwotą doładowania}
+		\caption{Pole z kwotą doładowania.}
 	\end{minipage}
 	%\hfill
 	\hspace{3cm}
 	\begin{minipage}[b]{0.25\textwidth}
 		\includegraphics[width=\textwidth]{05/driver_paypal1}
-		\caption{Realizacja płatności w PayPal}
+		\caption{Realizacja płatności w PayPal.}
 	\end{minipage}
 \end{figure}
 
@@ -219,13 +225,13 @@ Do zakupu biletu w systemie niezbędna jest informacja o pojeździe oraz parking
 	\centering
 	\begin{minipage}[b]{0.25\textwidth}
 		\includegraphics[width=\textwidth]{05/driver_kup_bilet1}
-		\caption{Zakup biletu - wybór pojazdu}
+		\caption{Zakup biletu - wybór pojazdu.}
 	\end{minipage}
 	%\hfill
 	\hspace{3cm}
 	\begin{minipage}[b]{0.25\textwidth}
 		\includegraphics[width=\textwidth]{05/driver_kup_bilet2}
-		\caption{Zakup biletu - parking i czas}
+		\caption{Zakup biletu - parking i czas.}
 	\end{minipage}
 \end{figure}
 
@@ -237,23 +243,23 @@ Na rys. \ref{przejscia_kierowca} znajduje się schemat, na którym przedstawione
 	\begin{center}
 		\includegraphics[width=0.7\linewidth]{05/all}
 	\end{center}
-	\caption{Ekrany w aplikacji kierowcy}
+	\caption{Ekrany w aplikacji kierowcy.}
 	\label{przejscia_kierowca}
 \end{figure}
 
 \newpage
 
-Druga z aplikacji umożliwiająca przeprowadzenie kontroli, została zbudowana z trzech ekranów. Po zalogowaniu, użytkownikowi prezentowany jest widok, na którym będą wyświetlane informacje o kontrolowanym pojeździe. Włączenie aparatu telefonu i rozpoczęcie przeprowadzania kontroli, zaczyna się w momencie dotknięcia przycisku ``Skanuj''. W chwili napotkania dowolnego kodu QR, skanowanie zostaje zakończone, a dane znajdujące się w kodzie są wysyłane do serwera systemu. Zwrócona odpowiedź jest prezentowana na ekranie, który był widoczny zaraz po zalogowaniu. To tutaj kontroler zostanie poinformowany o tym, czy kod jest poprawny i czy jest z nim powiązany obowiązujący bilet. W celu dalszej weryfikacji, prezentowana jest także informacja o numerze rejestracyjnym, aby można było sprawdzić czy plakietka z kodem QR jest powiązana z zaparkowanym pojazdem. Na rys. \ref{przejscia_kontroler} znajdują się ekrany aplikacji kontrolera.
+Druga z aplikacji umożliwiająca przeprowadzenie kontroli, a w jej skład wchodzą trzy ekrany. Po zalogowaniu, użytkownikowi prezentowany jest widok, na którym będą wyświetlane informacje o kontrolowanym pojeździe. Włączenie aparatu telefonu i rozpoczęcie przeprowadzania kontroli, zaczyna się w momencie dotknięcia przycisku ``Skanuj''. W chwili napotkania dowolnego kodu QR, skanowanie zostaje zakończone, a dane znajdujące się w kodzie są wysyłane do serwera systemu. Zwrócona odpowiedź jest prezentowana na ekranie, który był widoczny zaraz po zalogowaniu. To tutaj kontroler zostanie poinformowany o tym, czy kod jest poprawny i czy jest z nim powiązany obowiązujący bilet. W celu dalszej weryfikacji, prezentowana jest także informacja o numerze rejestracyjnym, aby można było sprawdzić czy plakietka z kodem QR jest powiązana z zaparkowanym pojazdem. Na rys. \ref{przejscia_kontroler} znajdują się ekrany aplikacji kontrolera.
 
 \begin{figure}[h!]
 	\begin{center}
 		\includegraphics[width=0.7\linewidth]{05/all_officer}
 	\end{center}
-	\caption{Ekrany w aplikacji kontrolera}
+	\caption{Ekrany w aplikacji kontrolera.}
 	\label{przejscia_kontroler}
 \end{figure}
 
-Cała funkcjonalność systemu dostępna z poziomu aplikacji mobilnych oparta jest na wymianie danych z serwerem. To właśnie udostępnianie odpowiedniego API jest głównym zadaniem aplikacji internetowej. W ten sposób tworzone są konta użytkowników, dodawane nowe pojazdy, kupowane oraz sprawdzane bilety. Oprócz tego system umożliwia także zarządzanie parkingiem, w tym dodawanie nowych grafików, taryfikatorów, czy tworzenie kont kontrolerów. To realizowane jest za pomocą strony administracyjnej, do której dostęp będą mieć pracownicy administracyjni. Strona ta została wygenerowana automatycznie przez framework Django, na bazie utworzonych modeli. Każdy z nich może być z jej poziomu tworzony, aktualizowany czy usuwany. Na rys. \ref{serwer_admin} została przedstawiona strona główna. Rys. \ref{serwer_schedule} przedstawia jedną z podstron, w której tworzony jest nowy grafik.
+Cała funkcjonalność systemu dostępna z poziomu aplikacji mobilnych oparta jest na wymianie danych z serwerem. To właśnie udostępnianie odpowiedniego API jest głównym zadaniem aplikacji internetowej. W ten sposób tworzone są konta użytkowników, dodawane nowe pojazdy, kupowane oraz sprawdzane bilety. Oprócz tego system umożliwia także zarządzanie parkingiem, w tym dodawanie nowych grafików, taryfikatorów, czy tworzenie kont kontrolerów. To realizowane jest za pomocą strony administracyjnej, do której dostęp będą mieć pracownicy administracyjni. Strona ta została wygenerowana automatycznie przez framework Django, na bazie utworzonych modeli. Każdy z nich może być z jej poziomu tworzony, aktualizowany czy usuwany. Na rys. \ref{serwer_admin} została przedstawiona strona główna panelu administratora. Rys. \ref{serwer_schedule} przedstawia jedną z podstron, w której tworzony jest nowy grafik.
 
 \newpage
 
@@ -261,7 +267,7 @@ Cała funkcjonalność systemu dostępna z poziomu aplikacji mobilnych oparta je
 	\begin{center}
 		\includegraphics[width=0.9\linewidth]{05/admin_main}
 	\end{center}
-	\caption{Główny panel administratora}
+	\caption{Główny panel administratora.}
 	\label{serwer_admin}
 \end{figure}
 
@@ -269,7 +275,7 @@ Cała funkcjonalność systemu dostępna z poziomu aplikacji mobilnych oparta je
 	\begin{center}
 		\includegraphics[width=0.9\linewidth]{05/admin_schedule}
 	\end{center}
-	\caption{Dodawanie nowego grafiku}
+	\caption{Dodawanie nowego grafiku.}
 	\label{serwer_schedule}
 \end{figure}
 
@@ -277,14 +283,14 @@ Cała funkcjonalność systemu dostępna z poziomu aplikacji mobilnych oparta je
 
 \subsection{Testy}
 
-Do weryfikowania poprawności tworzonego oprogramowania napisane zostały zestawy testów. Testy jednostkowe sprawdzają odpowiednie funkcjonowanie pojedynczych elementów systemu, takich jak metody klas. Poprawność interakcji zachodzących między modułami sprawdzana jest za pomocą testów integracyjnych. W aplikacji internetowej napisanej w Django, używana do tego celu jest klasa TestCase z pakietu django.test. Każdy z modułów tej aplikacji zawiera plik tests.py, w którym umieszczane są testy. Każdy z nich zawiera przynajmniej jedną asercję, która sprawdza poprawność otrzymanych danych i decyduje o sukcesie lub porażce przeprowadzonego testu. Podobnie sytuacja wygląda w Androidzie, gdzie używana jest biblioteka JUnit. Dodatkowo aplikacja mobilna była testowana zarówno na emulatorze, jak i prawdziwym urządzeniu.
+Do weryfikowania poprawności tworzonego oprogramowania napisane zostały zestawy testów. Testy jednostkowe sprawdzają odpowiednie funkcjonowanie pojedynczych elementów systemu, takich jak metody klas. Poprawność interakcji zachodzących między modułami sprawdzana jest za pomocą testów integracyjnych. W aplikacji internetowej napisanej w Django, używana do tego celu jest klasa TestCase z pakietu django.test. Każdy z modułów tej aplikacji zawiera plik tests.py, w którym umieszczane są testy. Każdy z nich musi posiadać przynajmniej jedną asercję, która sprawdza poprawność otrzymanych danych i decyduje o sukcesie lub porażce przeprowadzonego testu. Podobnie sytuacja wygląda w Androidzie, gdzie używana jest biblioteka JUnit. Dodatkowo w celu dokładnego przetestowania, aplikacja mobilna była uruchamiana na emulatorze oraz rzeczywistym urządzeniu z systemem Android.
 \\
 \\
-Akceptowanie transakcji przychodzących od klientów systemu wymaga posiadania specjalnego konta sprzedawcy. Dzięki PayPal Sandbox możliwe jest stworzenie środowiska testowego dla aplikacji, w którym mogą być utworzone fikcyjne konta klientów oraz sprzedawców. W ten sposób przeprowadzany jest cały proces płatności, który z perspektywy serwera i aplikacji mobilnej, niczym nie różni się od prawdziwych transakcji. 
+Akceptowanie transakcji przychodzących od klientów systemu wymaga posiadania specjalnego konta sprzedawcy. Dzięki PayPal Sandbox możliwe jest stworzenie środowiska testowego dla aplikacji, w którym mogą być utworzone fikcyjne konta klientów oraz sprzedawców. W ten sposób przeprowadzany jest cały proces płatności, który z perspektywy serwera i aplikacji mobilnej niczym nie różni się od prawdziwych transakcji. 
 
 \subsection{Środowiska programistyczne i edytory}
 
-Część mobilna systemu została wykonana w Android Studio, będącym dedykowanym środowiskiem programistycznym dla systemu Android. Zostało stworzone przez Google i bazuje na IntelliJ. Jest to rozbudowane IDE, które oprócz tworzenia gotowego szablonu aplikacji, posiada wszystkie funkcje spotykane w nowoczesnych środowiskach, takie jak refaktoryzacja kodu, podpowiedzi, czy poprawianie składni. Razem z nim instalowany jest także emulator, dzięki czemu możliwe jest testowanie aplikacji bez potrzeby posiadania prawdziwego urządzenia z systemem Android.
+Część mobilna systemu została wykonana w Android Studio, będącym dedykowanym środowiskiem programistycznym dla systemu Android. Zostało stworzone przez Google i bazuje na IntelliJ. Jest to rozbudowane IDE, które oprócz tworzenia gotowego szablonu aplikacji, posiada wszystkie funkcje spotykane w nowoczesnych środowiskach programistycznych, takie jak refaktoryzacja kodu, podpowiedzi, czy poprawianie składni. Razem z nim instalowany jest także emulator, dzięki czemu możliwe jest testowanie aplikacji bez potrzeby posiadania prawdziwego urządzenia z systemem Android.
 \\
 \\
-Do pisania aplikacji serwerowej wykorzystywany był, dostępny z poziomu wiersza poleceń, edytor Vim. Jego standardowa funkcjonalność została rozszerzona o zewnętrzne dodatki, dzięki stworzonemu przez społeczność systemowi zarządzania dodatkami -- Vundle. Dodatek YouCompleteMe wprowadził okna z podpowiedziami i uzupełniania do wpisywanego kodu. Drugi zainstalowanym dodatkiem był NERD Tree, dzięki któremu możliwe stało się wyświetlanie struktury plików katalogu, w którym został uruchomiony edytor.
+Do pisania aplikacji serwerowej wykorzystywany był, dostępny z poziomu wiersza poleceń, edytor Vim. Jego standardowa funkcjonalność została rozszerzona o zewnętrzne dodatki, dzięki stworzonemu przez społeczność systemowi zarządzania rozszerzeniami -- Vundle. Do pracy wykorzystane zostały dodatki YouCompleteMe (okna z podpowiedziami i uzupełnianie kodu) i NERD Tree (wyświetlanie struktury plików).

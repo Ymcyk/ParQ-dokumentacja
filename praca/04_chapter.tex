@@ -5,7 +5,7 @@ W tym rozdziale zawarta została dokumentacja techniczna systemu strefy parkowan
 
 \subsection{Schemat działania systemu ParQ}
 
-Stworzony w ramach tej pracy system płatności dostosowany jest do potrzeb Strefy Płatnego Parkowania w Szczecinie. Umożliwia on utworzenie taryfikatora wraz z opłatami, które zmieniają się wraz z czasem postoju. System nazwany został ParQ, umożliwia dokonanie zakupu biletu postojowego, oraz jego późniejszą kontrolę. Obie te czynności wykonywane są w oparciu o generowany dla każdego pojazdu, unikalny kod UUID. To właśnie on znajduje się na plakietkach z kodem QR. Po jego zeskanowaniu, kontroler uzyska informacje o danym pojeździe.
+Stworzony w ramach tej pracy system płatności dostosowany jest do potrzeb Strefy Płatnego Parkowania w Szczecinie. Umożliwia on utworzenie taryfikatora wraz z opłatami, które zmieniają się wraz z czasem postoju. System ParQ, umożliwia dokonanie zakupu biletu postojowego oraz jego późniejszą kontrolę. Obie te czynności wykonywane są w oparciu o generowany dla każdego pojazdu unikalny kod UUID, który znajduje się na plakietkach w postaci kodu QR. Po jego zeskanowaniu, kontroler uzyska informacje o danym pojeździe.
 
 Cała funkcjonalność systemu dostępna jest dla jego użytkowników za pośrednictwem aplikacji na urządzeniach mobilnych. Wykonane one zostały w formie tzw.~``cienkiego klienta'', co oznacza, że nie są przeprowadzane na nich żadne skomplikowane operacje. Komunikują się z serwerem wysyłając do niego żądania, a użytkownikowi prezentowana jest odebrana odpowiedź. Do skorzystania z systemu niezbędne jest posiadanie wcześniej założonego konta.
 
@@ -13,14 +13,14 @@ Cała funkcjonalność systemu dostępna jest dla jego użytkowników za pośred
 	\begin{center}
 		\includegraphics[width=0.7\linewidth]{04/schemat}
 	\end{center}
-	\caption{Schemat działania systemu}
+	\caption{Schemat działania systemu.}
 \end{figure}
 
 Z każdym kontem kierowcy w systemie powiązana jest jego wirtualna portmonetka. Są to elektroniczne pieniądze (w postaci krotki z ilością pieniędzy w bazie danych), jakimi dokonywać będzie on opłat za bilety postojowe. Po zarejestrowaniu użytkownik musi doładować swoje konto. Wykonuje to także za pośrednictwem aplikacji mobilnej, z wykorzystaniem bramki płatności, a wielkość doładowania zależy od kwoty, jaka została wpłacona. Po tej operacji, a także zarejestrowaniu swojego pojazdu w systemie, możliwy staje się zakup biletu postojowego.
 
-Transakcja związana z dodaniem środków na konto w systemie odbywa się z wykorzystaniem usług PayPal'a, który udostępnia na Androida specjalną bibliotekę. To ona odpowiedzialna jest za komunikację z serwerami tego usługodawcy płatności. Kierowcy, po podaniu kwoty jaką chce zasilić konto, prezentowany jest ekran (także udostępniany w ramach tej biblioteki), gdzie dokonywany jest wybór metody płatności i autoryzacja. Po tych krokach, a także transakcji przeprowadzonej z sukcesem, zwrócony zostaje identyfikator płatności. Ten unikalny ciąg znaków aplikacja wysyła już do serwera systemu ParQ. On, komunikując się z PayPal'em, uzyskuje informacje o kwocie, jak została wpłacona. Po otrzymaniu odpowiedzi, konto kierowcy zostaje zasilone. Co istotne, identyfikator transakcji zapisywany jest w bazie danych, dzięki czemu ta sama wpłata nie zostanie naliczona więcej niż jeden raz.
+Transakcja związana z dodaniem środków na konto w systemie odbywa się z wykorzystaniem usług PayPal'a, który udostępnia na Androida specjalną bibliotekę. To ona odpowiedzialna jest za komunikację z serwerami tego usługodawcy płatności. Kierowcy, po podaniu kwoty jaką chce zasilić konto, prezentowany jest ekran (także udostępniany w ramach tej biblioteki), gdzie dokonywany jest wybór metody płatności i autoryzacja. Po tych krokach (a także transakcji przeprowadzonej z sukcesem) zwrócony będzie unikalny identyfikator płatności, który zostaje wysłany przez aplikację do serwera systemu ParQ. On, komunikując się z PayPal'em, uzyskuje informacje o kwocie, jak została wpłacona. Po otrzymaniu odpowiedzi, konto kierowcy zostaje zasilone. Co istotne, identyfikator transakcji zapisywany jest w bazie danych, dzięki czemu ta sama wpłata nie zostanie naliczona więcej niż jeden raz.
 
-Osoba przeprowadzająca kontrolę potrzebuje do swojej pracy urządzenia mobilnego ze sprawnym aparatem. Sprawdzenie ważności biletu odbywa się poprzez zeskanowanie plakietki z kodem identyfikacyjnym pojazdu. Odpowiedź zwrócona przez serwer zawiera informacje o danym pojeździe, a także o braku lub posiadaniu przypisanego biletu postojowego.
+Osoba przeprowadzająca kontrolę potrzebuje do swojej pracy urządzenia mobilnego ze sprawnym aparatem. Sprawdzenie ważności biletu odbywa się poprzez zeskanowanie plakietki z kodem identyfikacyjnym pojazdu. Odpowiedź zwrócona przez serwer zawiera informacje o danym pojeździe, a także o braku lub posiadaniu przypisanego biletu postojowego. 
 
 \subsubsection*{Moduły}
 
@@ -126,77 +126,77 @@ Wymagania funkcjonalne stanowią zbiór wszystkich funkcjonalności, udostępnia
 	\begin{center}
 		\includegraphics[width=1.0\linewidth]{04/use_case-kierowca_platnosc_bilety}
 	\end{center}
-	\caption{Przypadki użycia dla kierowcy}
+	\caption{Przypadki użycia dla kierowcy.}
 \end{figure}
 
 \begin{figure}[p]
 	\begin{center}
 		\includegraphics[width=1.03\linewidth]{04/use_case_rest}
 	\end{center}
-	\caption{Przypadki użycia dla kontrolera, pracownika i administratora}
+	\caption{Przypadki użycia dla kontrolera, pracownika i administratora.}
 \end{figure}
 
 \begin{figure}[p]
 	\begin{center}
 		\includegraphics[width=0.99\linewidth]{04/packages}
 	\end{center}
-	\caption{Diagram pakietów}
+	\caption{Diagram pakietów.}
 \end{figure}
 
 \begin{figure}[p]
 	\begin{center}
 		\includegraphics[width=1.0\linewidth]{04/ParQ_class_users}
 	\end{center}
-	\caption{Diagram klas dla pakietów paypal, users, badges oraz powiązanych}
+	\caption{Diagram klas dla pakietów paypal, users, badges oraz powiązanych.}
 \end{figure}
 
 \begin{figure}[p]
 	\begin{center}
 		\includegraphics[width=0.99\linewidth]{04/ParQ_class_charges_parkings}
 	\end{center}
-	\caption{Diagram klas dla pakietów parkings, charges oraz powiązanych}
+	\caption{Diagram klas dla pakietów parkings, charges oraz powiązanych.}
 \end{figure}
 
 \begin{figure}[p]
 	\begin{center}
 		\includegraphics[width=0.99\linewidth]{04/user_app_class_diagram}
 	\end{center}
-	\caption{Diagram klas rejestracji, dodawania pojazdu i zakupu biletu aplikacji mobilnej}
+	\caption{Diagram klas rejestracji, dodawania pojazdu i zakupu biletu aplikacji mobilnej.}
 \end{figure}
 
 \begin{figure}[p]
 	\begin{center}
 		\includegraphics[width=0.88\linewidth]{04/activity_charge}
 	\end{center}
-	\caption{Diagram aktywności doładowywania portmonetki}
+	\caption{Diagram aktywności doładowywania portmonetki.}
 \end{figure}
 
 \begin{figure}[p]
 	\begin{center}
 		\includegraphics[width=0.88\linewidth]{04/activity_ticket_controlling}
 	\end{center}
-	\caption{Diagram aktywności kontrolowania biletu}
+	\caption{Diagram aktywności kontrolowania biletu.}
 \end{figure}
 
 \begin{figure}[p]
 	\begin{center}
 		\includegraphics[width=0.75\linewidth]{04/zaplata_za_ticket_sequence}
 	\end{center}
-	\caption{Diagram sekwencji zakupu biletu postojowego}
+	\caption{Diagram sekwencji zakupu biletu postojowego.}
 \end{figure}
 
 \begin{figure}[p]
 	\begin{center}
 		\includegraphics[width=0.9\linewidth]{04/vehicle_adding_sequence}
 	\end{center}
-	\caption{Diagram sekwencji dodawania nowego pojazdu}
+	\caption{Diagram sekwencji dodawania nowego pojazdu.}
 \end{figure}
 
 \begin{figure}[p]
 	\begin{center}
 		\includegraphics[width=0.9\linewidth]{04/parking_create}
 	\end{center}
-	\caption{Diagram sekwencji dodawania nowego parkingu oraz opłat}
+	\caption{Diagram sekwencji dodawania nowego parkingu oraz opłat.}
 \end{figure}
 
 \newpage
@@ -205,7 +205,7 @@ Wymagania funkcjonalne stanowią zbiór wszystkich funkcjonalności, udostępnia
 
 Autoryzacja użytkowników w systemie opera się na tokenie, generowanym podczas zakładania konta. Jest on niezbędny do komunikacji serwera z aplikacją mobilną, która uzyskuje go podczas logowania. Dołączany jest on później do nagłówka każdego żądania (oprócz rejestracji oraz logowania).
 
-\captionof{listing}{Dane umieszczane w nagłówkach żądań}
+\captionof{listing}{Dane umieszczane w nagłówkach żądań.}
 \label{naglowek_zadania}
 \vspace{-0.3cm}
 \begin{table}[h]

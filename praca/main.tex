@@ -49,11 +49,20 @@
 	\input{title_page}
 	
 	% pusta strona
-	\mbox{}
-	\thispagestyle{empty}
-	\newpage
+	%\mbox{}
+	%\thispagestyle{empty}
+	%\newpage
 	
 	\begin{onehalfspacing}
+		
+		% oświadczenie
+		\input{statement}
+		\newpage
+		
+		%abstract
+		\input{abstract}
+		\newpage
+		
 		% spis treści
 		\pagenumbering{arabic}
 		\setcounter{page}{3}
@@ -70,8 +79,8 @@
 		\input{02_chapter}
 		\newpage
 		
-		\input{03_chapter}
-		\newpage
+		%\input{03_chapter}
+		%\newpage
 		
 		\input{04_chapter}
 		\newpage
@@ -82,8 +91,8 @@
 		\input{summary}
 		\newpage
 		
-		\input{glossary}
-		\newpage
+		%\input{glossary}
+		%\newpage
 		\begin{raggedright}
 			\bibliographystyle{plplain}
 			\bibliography{bibfile.bib}
