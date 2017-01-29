@@ -1,13 +1,13 @@
 \setcounter{listing}{0}
 
 \section{Projekt systemu}
-W tym rozdziale zawarta została dokumentacja techniczna systemu strefy parkowania. Na samym początku przedstawiony jest schemat, opisujący sposób jego działania. W dalszej części opisana została specyfikacja wymagań, z definicją systemu oraz wymaganiami funkcjonalnymi i niefunkcjonalnymi. Pozostała część rozdziału została poświęcona diagramom UML i opisowi API, wykorzystywanego do komunikacji serwera z aplikacją mobilną. 
+W tym rozdziale zawarta została dokumentacja techniczna systemu strefy parkowania. Na samym początku przedstawiony jest schemat, opisujący sposób jego działania. W dalszej części opisana została specyfikacja wymagań z definicją systemu oraz wymaganiami funkcjonalnymi i niefunkcjonalnymi. Pozostała część rozdziału została poświęcona diagramom UML i opisowi API, wykorzystywanego do komunikacji serwera z aplikacją mobilną. 
 
 \subsection{Schemat działania systemu ParQ}
 
-Stworzony w ramach tej pracy system płatności dostosowany jest do potrzeb Strefy Płatnego Parkowania w Szczecinie. Umożliwia on utworzenie taryfikatora wraz z opłatami, które zmieniają się wraz z czasem postoju. System ParQ, umożliwia dokonanie zakupu biletu postojowego oraz jego późniejszą kontrolę. Obie te czynności wykonywane są w oparciu o generowany dla każdego pojazdu unikalny kod UUID, który znajduje się na plakietkach w postaci kodu QR. Po jego zeskanowaniu, kontroler uzyska informacje o danym pojeździe.
+Stworzony w ramach tej pracy system płatności dostosowany jest do potrzeb Strefy Płatnego Parkowania w Szczecinie. Umożliwia on utworzenie taryfikatora wraz z opłatami, które zmieniają się wraz z czasem postoju. System ParQ umożliwia dokonanie zakupu biletu postojowego oraz jego późniejszą kontrolę. Obie te czynności wykonywane są w oparciu o generowany dla każdego pojazdu unikalny kod UUID, który znajduje się na plakietkach w postaci kodu QR. Po jego zeskanowaniu, kontroler uzyska informacje o danym pojeździe.
 
-Cała funkcjonalność systemu dostępna jest dla jego użytkowników za pośrednictwem aplikacji na urządzeniach mobilnych. Wykonane one zostały w formie tzw.~``cienkiego klienta'', co oznacza, że nie są przeprowadzane na nich żadne skomplikowane operacje. Komunikują się z serwerem wysyłając do niego żądania, a użytkownikowi prezentowana jest odebrana odpowiedź. Do skorzystania z systemu niezbędne jest posiadanie wcześniej założonego konta.
+Cała funkcjonalność systemu dostępna jest dla jego użytkowników za pośrednictwem aplikacji na urządzeniach mobilnych. Wykonane one zostały w formie tzw.~``cienkiego klienta'' (ang. thin client), co oznacza, że nie są przeprowadzane na nich żadne skomplikowane operacje. Komunikują się z serwerem wysyłając do niego żądania, a użytkownikowi prezentowana jest odebrana odpowiedź. Do skorzystania z systemu niezbędne jest posiadanie wcześniej założonego konta.
 
 \begin{figure}[h]
 	\begin{center}
@@ -18,7 +18,7 @@ Cała funkcjonalność systemu dostępna jest dla jego użytkowników za pośred
 
 Z każdym kontem kierowcy w systemie powiązana jest jego wirtualna portmonetka. Są to elektroniczne pieniądze (w postaci krotki z ilością pieniędzy w bazie danych), jakimi dokonywać będzie on opłat za bilety postojowe. Po zarejestrowaniu użytkownik musi doładować swoje konto. Wykonuje to także za pośrednictwem aplikacji mobilnej, z wykorzystaniem bramki płatności, a wielkość doładowania zależy od kwoty, jaka została wpłacona. Po tej operacji, a także zarejestrowaniu swojego pojazdu w systemie, możliwy staje się zakup biletu postojowego.
 
-Transakcja związana z dodaniem środków na konto w systemie odbywa się z wykorzystaniem usług PayPal'a, który udostępnia na Androida specjalną bibliotekę. To ona odpowiedzialna jest za komunikację z serwerami tego usługodawcy płatności. Kierowcy, po podaniu kwoty jaką chce zasilić konto, prezentowany jest ekran (także udostępniany w ramach tej biblioteki), gdzie dokonywany jest wybór metody płatności i autoryzacja. Po tych krokach (a także transakcji przeprowadzonej z sukcesem) zwrócony będzie unikalny identyfikator płatności, który zostaje wysłany przez aplikację do serwera systemu ParQ. On, komunikując się z PayPal'em, uzyskuje informacje o kwocie, jak została wpłacona. Po otrzymaniu odpowiedzi, konto kierowcy zostaje zasilone. Co istotne, identyfikator transakcji zapisywany jest w bazie danych, dzięki czemu ta sama wpłata nie zostanie naliczona więcej niż jeden raz.
+Transakcja związana z dodaniem środków na konto w systemie odbywa się z wykorzystaniem usług PayPala, który udostępnia na Androida specjalną bibliotekę. To ona odpowiedzialna jest za komunikację z serwerami tego usługodawcy płatności. Kierowcy, po podaniu kwoty jaką chce zasilić konto, prezentowany jest ekran (także udostępniany w ramach tej biblioteki), gdzie dokonywany jest wybór metody płatności i autoryzacja. Po tych krokach (a także transakcji przeprowadzonej z sukcesem) zwrócony będzie unikalny identyfikator płatności, który zostaje wysłany przez aplikację do serwera systemu ParQ. On, komunikując się z PayPalem, uzyskuje informacje o kwocie, jak została wpłacona. Po otrzymaniu odpowiedzi konto kierowcy zostaje zasilone. Co istotne, identyfikator transakcji zapisywany jest w bazie danych, dzięki czemu ta sama wpłata nie zostanie naliczona więcej niż jeden raz.
 
 Osoba przeprowadzająca kontrolę potrzebuje do swojej pracy urządzenia mobilnego ze sprawnym aparatem. Sprawdzenie ważności biletu odbywa się poprzez zeskanowanie plakietki z kodem identyfikacyjnym pojazdu. Odpowiedź zwrócona przez serwer zawiera informacje o danym pojeździe, a także o braku lub posiadaniu przypisanego biletu postojowego. 
 
@@ -54,6 +54,7 @@ Wymagania funkcjonalne stanowią zbiór wszystkich funkcjonalności, udostępnia
 	\item Zarządzanie kontem użytkownika
 		\begin{itemize}
 			\item System posiada dwie role użytkowników, którzy mogą się zalogować w aplikacji mobilnej: kierowcę oraz kontrolera.
+			\item Użytkownicy do korzystania z systemu potrzebują telefonu z zainstalowaną aplikacją ParQ.
 			\item Kierowca może się zarejestrować w systemie.
 			\item Kierowca może zalogować się do systemu.
 			\item Podczas zakładania konta kierowcy, wymagane są: nazwa użytkownika, e-mail oraz hasło.
@@ -61,6 +62,7 @@ Wymagania funkcjonalne stanowią zbiór wszystkich funkcjonalności, udostępnia
 			\item Kierowca może przeglądać informacje podane podczas rejestracji.
 			\item Konto kontrolera tworzone jest przez administratora.
 		\end{itemize}
+\newpage
 	\item Zarządzanie pojazdami
 		\begin{itemize}
 			\item Kierowca może zarejestrować swoje pojazdy w systemie.
@@ -74,7 +76,7 @@ Wymagania funkcjonalne stanowią zbiór wszystkich funkcjonalności, udostępnia
 		\begin{itemize}
 			\item Kierowca kupując bilet określa czas postoju oraz parking w jakim chce dany bilet kupić.
 			\item Kierowca może zakupić bilet, jeżeli posiada środki w wirtualnej portmonetce oraz przynajmniej jeden zarejestrowany pojazd w systemie.
-			\item Bilet obowiązuje od chwili zakupu.
+			\item Bilet obowiązuje od chwili zakupu przez podaną ilość minut.
 			\item Nie ma możliwości zakupu biletu na datę inną, niż moment zakupu.
 			\item Kierowca może kupić bilet jedynie dla pojazdu przypisanego do jego konta.
 			\item Kierowca nie może zakupić biletu, jeżeli nie posiada wystarczającej ilości środków.
@@ -95,6 +97,7 @@ Wymagania funkcjonalne stanowią zbiór wszystkich funkcjonalności, udostępnia
 			\item Kontrola odbywa się poprzez zeskanowanie kodu QR z identyfikatorem pojazdu.
 			\item Kontroler po zeskanowaniu otrzymuje informacje o numerze rejestracyjnym pojazdu, celem sprawdzenia, czy dany identyfikator jest przypisany do kontrolowanego pojazdu.
 			\item Kontroler otrzymuje informację o ważności postoju -- czy bilet został zakupiony i czy jest ważny oraz na jaki parking został zakupiony.
+			\item W przypadku gdy kontrolowany pojazd nie posiada zakupionego biletu, aplikacja informuje kontrolera o tym fakcie.
 		\end{itemize}
 	\item Zarządzanie parkingami
 		\begin{itemize}
@@ -115,8 +118,10 @@ Wymagania funkcjonalne stanowią zbiór wszystkich funkcjonalności, udostępnia
 	\item Aplikacja mobilna powinna posiadać prosty interfejs graficzny.
 	\item Zakup biletu w aplikacji mobilnej powinien trwać nie dłużej niż 5 sekund.
 	\item Uzupełnienie konta w systemie możliwe jest z wykorzystaniem kart płatniczych.
-	\item System powinien być w stanie obsłużyć przynajmniej 400 tyś. użytkowników.
+	\item System powinien być w stanie obsłużyć przynajmniej 400 tys. użytkowników.
 	\item Opłata za bilet naliczana jest za każdą minutę postoju.
+	\item Opłata za bilet różni się w zależności od strefy w jakiej bilet został kupiony.
+	\item Bilet nie może zostać kupiony na kwotę większą, niż aktualny stan portmonetki użytkownika. 
 \end{itemize}
 
 \newpage
@@ -203,7 +208,7 @@ Wymagania funkcjonalne stanowią zbiór wszystkich funkcjonalności, udostępnia
 
 \subsection{Opis REST API}
 
-Autoryzacja użytkowników w systemie opera się na tokenie, generowanym podczas zakładania konta. Jest on niezbędny do komunikacji serwera z aplikacją mobilną, która uzyskuje go podczas logowania. Dołączany jest on później do nagłówka każdego żądania (oprócz rejestracji oraz logowania).
+Autoryzacja użytkowników w systemie opera się na tokenie generowanym podczas zakładania konta. Jest on niezbędny do komunikacji serwera z aplikacją mobilną, która uzyskuje go podczas logowania. Dołączany jest on później do nagłówka każdego żądania (oprócz rejestracji oraz logowania).
 
 \captionof{listing}{Dane umieszczane w nagłówkach żądań.}
 \label{naglowek_zadania}

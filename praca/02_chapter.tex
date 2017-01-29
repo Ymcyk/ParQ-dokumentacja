@@ -1,8 +1,8 @@
 \section{Opis wykorzystanych technologii}
-W tym rozdziale znajdują się informacje dotyczące najważniejszych technologii, które wykorzystano podczas realizacji zadań pracy. W kolejnych podrozdziałach opisane zostały m.in. kody graficzne QR, system mobilny Android oraz Django -- framework do tworzenia aplikacji mobilnych. Na końcu znajduje się opis PayPala, czyli usługi wykorzystywanej do realizacji płatności w systemie.
+W tym rozdziale znajdują się informacje dotyczące najważniejszych technologii, które wykorzystano podczas realizacji zadań pracy. W kolejnych podrozdziałach opisane zostały m.in. kody graficzne QR, system mobilny Android oraz Django -- framework do tworzenia aplikacji mobilnych. Na końcu znajduje się opis PayPala, czyli usługi do realizacji płatności w systemie.
 
 \subsection{Kody graficzne QR}
-Z przedstawianiem danych w postaci kodów graficznych, można się spotkać na przykład w marketach, gdzie towary oznaczane są za pomocą jednowymiarowego kodu kreskowego. Kombinacja jasnych oraz ciemnych linii służy do kodowania informacji, które odczytywane są za pomocą skanera z laserem. Tego typu metody stosuje się głównie w celach identyfikacji. Do przechowywania większej ilości danych wykorzystuje się częściej tzw. kody 2D, do których zaliczy jest kod QR.
+Z przedstawianiem danych w postaci kodów graficznych można się spotkać na przykład w marketach, gdzie towary oznaczane są za pomocą jednowymiarowego kodu kreskowego. Kombinacja jasnych oraz ciemnych linii służy do kodowania informacji, które odczytywane są za pomocą skanera z laserem. Tego typu metody stosuje się głównie w celach identyfikacji. Do przechowywania większej ilości danych wykorzystuje się częściej tzw. kody 2D, do których zaliczany jest kod QR.
 
 Kody QR (ang. Quick Respone - szybka odpowiedź) to dwuwymiarowe, kwadratowe kody graficzne. Składają się z modułów, czyli ciemnych oraz jasnych kwadratów, które są nośnikami danych. Zostały stworzone przez japońską firmę Denso-Wave w 1994 r \cite{thonky_tutorial} i według postanowień licencyjnych, mogą być wykorzystywane bez żadnych opłat. Standard został opisany w normie ISO/IEC 18004:2015 \cite{norma_qr}. Dzięki dodatkowemu wymiarowi, pozwalają na przechowywanie większej ilości informacji (do ok. 7000 liczb lub 4000 znaków alfanumerycznych) niż jednowymiarowe kody kreskowe. Ponadto, zapewniają zdecydowanie lepszą korekcję błędów, ponieważ nawet częściowo uszkodzony kod może zostać poprawnie odczytany. W samym kodzie oprócz danych umieszczane są także miejsca szczególne, ułatwiające orientację podczas odkodowywania. Ich liczba zależy od rozmiaru kodu.
 
@@ -14,11 +14,11 @@ Kody QR (ang. Quick Respone - szybka odpowiedź) to dwuwymiarowe, kwadratowe kod
 	\vspace{-0.3cm}
 \end{figure}
 
-Na początku kody QR były głównie wykorzystywane w logistyce, przechowując na przykład informacje o adresie docelowym przesyłki. Współcześnie kojarzone są przeważnie ze smartfonami i można je spotkać niemal wszędzie. Służą do komunikacji z użytkownikami urządzeń mobilnych, przełamując niejako barierę między światem wirtualnym, a rzeczywistym. Mimo, że kod zawiera informacje jedynie w postaci liczb, liter i symboli, to odpowiednie formatowanie informacji pozwala na dodatkowe ich interpretowanie przez urządzenie przenośne. I tak po zeskanowaniu może zostać wysłana wiadomość e-mail, dodany numer do kontaktów, czy wyświetlona strona w przeglądarce internetowej.
+Na początku kody QR były głównie wykorzystywane w logistyce, przechowując na przykład informacje o adresie docelowym przesyłki. Współcześnie kojarzone są przeważnie ze smartfonami i można je spotkać niemal wszędzie. Służą do komunikacji z użytkownikami urządzeń mobilnych, przełamując niejako barierę między światem wirtualnym a rzeczywistym. Mimo, że kod zawiera informacje jedynie w postaci liczb, liter i symboli, to odpowiednie formatowanie informacji pozwala na dodatkowe ich interpretowanie przez urządzenie przenośne. I tak po zeskanowaniu może zostać wysłana wiadomość e-mail, dodany numer do kontaktów, czy wyświetlona strona w przeglądarce internetowej.
 
 \subsubsection*{Sposoby kodowania}
 
-Kodowanie informacji odbywa się w zależności od trzech parametrów, a są to: wersja, typ danych oraz poziom korekcji błędów. Liczba modułów w kodzie ustalana jest przez numer wersji, która jest numerowana od 1 do 40. Determinuje ona ilość informacji, jakie mogą się w kodzie znaleźć. Wersja pierwsza posiada 441 modułów (21 na bok), a czterdziesta składa się z 31329 modułów (177 na bok). Każda kolejna jest większa od poprzedniej o trzy moduły. Wyższy numer wersji przekłada się na większą pojemność kodu, jednak wpływ na to mają także inne parametry. Dla wersji czterdziestej, w zależności od ustawień pozostałych parametrów, liczba znaków mieści się w przedziale od 7089 do 784 znaków.
+Kodowanie informacji odbywa się w zależności od trzech parametrów, a są to: wersja, typ danych oraz poziom korekcji błędów. Liczba modułów w kodzie ustalana jest przez numer wersji (od 1 do 40). Determinuje ona ilość informacji, jakie mogą się w kodzie znaleźć. Wersja pierwsza posiada 441 modułów (21 na bok), a czterdziesta składa się z 31329 modułów (177 na bok). Każda kolejna jest większa od poprzedniej o trzy moduły. Wyższy numer wersji przekłada się na większą pojemność kodu, jednak wpływ na to mają także inne parametry. Dla wersji czterdziestej, w zależności od ustawień pozostałych parametrów, liczba znaków mieści się w przedziale od 7089 do 784 znaków.
 
 Typ ustalany jest w zależności od rodzaju danych, jakie mają się znaleźć w kodzie. W przypadku gdy będą to tylko liczby, wystarczający będzie typ numeryczny, jeśli natomiast informacja zbudowana jest także z liter, to użyty może być na przykład typ alfanumeryczny. Wybór wpływa na ilość bitów (czyli modułów), które będą przechowywać informację o pojedynczym znaku, co przekłada się na maksymalną pojemność. Kod QR pozwala na przechowywanie czterech różnych typów danych, a są to:
 
@@ -62,7 +62,7 @@ Korekcja błędów służy do określenia, czy dane zostały odczytane poprawnie
 
 Tworzenie kodu graficznego QR jest procesem złożonym. Po analizie danych określającej typ, konieczne jest ich odpowiednie zakodowanie. Informacje dzielone są na bloki, do których dodawane są kolejne bity związane z korekcją błędów. Przed przedstawieniem danych w postaci modułów QR, ważne jest również odpowiednie ich maskowanie. Zbyt duża ilość kwadratów o tym samym kolorze w jednym miejscu, może spowodować błędne odczytanie kodu. Dopiero po tych kilku etapach, może zostać wygenerowany kod. Dla wszystkich najpopularniejszych języków programowania istnieją odpowiednie do tego zadania biblioteki. Na przykład w Pythonie taką biblioteką jest qrcode.
 
-Do odczytywania kodu mogą zostać wykorzystane urządzenia mobilne. Często razem z nimi dostarczane są specjalne aplikacje, które to umożliwiają. Podobnie jak w przypadku kodowania, do odczytywania także można wykorzystać gotowe rozwiązania, w postaci bibliotek. Na urządzenia z systemem Android jest to np.:~bilioteka ZXing (``Zebra Crossing'').
+Do odczytywania kodu mogą zostać wykorzystane urządzenia mobilne. Często razem z nimi dostarczane są specjalne aplikacje, które to umożliwiają. Podobnie jak w przypadku kodowania, do odczytywania także można wykorzystać gotowe rozwiązania, w postaci bibliotek. Na urządzenia z systemem Android dostępna jest np.:~bilioteka ZXing (``Zebra Crossing'').
 
 \subsection{Architektura REST}
 
@@ -103,7 +103,7 @@ Mimo, że programy na Androida pisane są w Javie, nie jest wykorzystywany w nim
 
 Do wersji 4.4 Androida (KitKat) aplikacje uruchamiane były w wirtualnej maszynie Dalvik. Sposób działania był dość zbliżony do JVM, opierając się na interpretacji kodu bajtowego. Jedną z różnic był sposób działania wirtualnego procesora, który w Dalviku opartu został na rejestrach, a nie na stosie. Takie podejście wpływało na mniejsze zużycie pamięci, jednak programy były większe, gdyż instrukcje musiały zawierać dodatkowe informacje co do rejestrów, z których korzystały.
 
-W wersji 5.0 Androida (Lolipop) zastąpiono dotychczasową maszynę wirtualną Dalvik, środowiskiem uruchomieniowym Android runtime (ART). Podobnie jak poprzednik przyjmuje pliki dex, jednak nie interpretuje ich, a w momencie instalacji aplikacji - kompiluje. Taka kompilacja kodu pośredniego języka wysokiego poziomu, do kodu natywnego, nosi nazwę Ahead-of-time (AOT). Przy każdym uruchomieniu aplikacji, dzięki ART, wykorzystywany jest jej natywny kod. Ta zmiana powoduje szybsze działanie i uruchamianie się aplikacji. Wadą jest znacznie dłuższy czas instalacji, który teraz obejmuje także obowiązkową kompilację.
+W wersji 5.0 Androida (Lolipop) zastąpiono dotychczasową maszynę wirtualną Dalvik środowiskiem uruchomieniowym Android runtime (ART). Podobnie jak poprzednik przyjmuje pliki dex, jednak nie interpretuje ich, a w momencie instalacji aplikacji - kompiluje. Taka kompilacja kodu pośredniego języka wysokiego poziomu, do kodu natywnego, nosi nazwę Ahead-of-time (AOT). Przy każdym uruchomieniu aplikacji, dzięki ART, wykorzystywany jest jej natywny kod. Ta zmiana powoduje szybsze działanie i uruchamianie się aplikacji. Wadą jest znacznie dłuższy czas instalacji, który teraz obejmuje także obowiązkową kompilację.
 
 \subsubsection*{Programowanie aplikacji}
 Aby móc tworzyć aplikacje na Androida z wykorzystaniem Javy, konieczne jest posiadanie:
@@ -113,7 +113,7 @@ Aby móc tworzyć aplikacje na Androida z wykorzystaniem Javy, konieczne jest po
 	\item Android SDK.
 \end{itemize}
 
-Wykorzystując Javę, aplikacja do funkcji systemowych odwoływać się będzie za pomocą udostępnionego przez system API. Dzięki temu, że nie jest to kod natywny, nie jest konieczna osobna kompilacja dla każdej dostępnej architektury. Programy są uniwersalne i dopiero po zainstalowaniu na konkretnym urządzeniu interpretowany jest kod bajtowy, bądź przeprowadzana kompilacja AOT. Przez twórców systemu udostępniane jest także NDK, czyli Native Development Kit. Z jego pomocą aplikacje mogą być tworzone w C lub C++, odwołując się bezpośrednio do bibliotek systemowych. Niestety, mimo możliwego zysku na wydajności, stworzony kod jest zależny od architektury. Dodatkowo większość zewnętrznych bibliotek jest tworzonych w Javie. 
+Wykorzystując Javę, aplikacja do funkcji systemowych odwoływać się będzie za pomocą udostępnionego przez system API. Dzięki temu, że nie jest to kod natywny nie jest konieczna osobna kompilacja dla każdej dostępnej architektury. Programy są uniwersalne i dopiero po zainstalowaniu na konkretnym urządzeniu interpretowany jest kod bajtowy, bądź przeprowadzana kompilacja AOT. Przez twórców systemu udostępniane jest także NDK, czyli Native Development Kit. Z jego pomocą aplikacje mogą być tworzone w C lub C++, odwołując się bezpośrednio do bibliotek systemowych. Niestety, mimo możliwego zysku na wydajności, stworzony kod jest zależny od architektury. Dodatkowo większość zewnętrznych bibliotek jest tworzonych w Javie. 
 
 Bardzo zalecane jest używanie zintegrowanego środowiska programistycznego, które automatyzuje niektóre czynności. Potrafi stworzyć za użytkownika projekt z wymaganą strukturą plików, wykonać wszystkie etapy kompilacji, wgrać program na urządzenie i wiele innych. Dedykowanym IDE jest Android Studio, do niedawna wykorzystywany był domyślnie Eclipse.
 
@@ -125,7 +125,7 @@ Bardzo zalecane jest używanie zintegrowanego środowiska programistycznego, kt�
 	\vspace{-0.3cm}
 \end{figure}
 
-Podczas działania aplikacja prezentuje użytkownikowi tzw. ekrany. Są to odpowiedniki okien systemowych, gdzie umieszczane są elementy graficznego interfejsu użytkownika, czyli widoki (ang. views), jak np.: przyciski, rozwijane listy, czy pola tekstowe. Wchodząc z nimi w interakcję, możliwa jest komunikacja między użytkownikiem, a urządzeniem. 
+Podczas działania aplikacja prezentuje użytkownikowi tzw. ekrany. Są to odpowiedniki okien systemowych, gdzie umieszczane są elementy graficznego interfejsu użytkownika, czyli widoki (ang. views), jak np.: przyciski, rozwijane listy, czy pola tekstowe. Wchodząc z nimi w interakcję, możliwa jest komunikacja między użytkownikiem a urządzeniem. 
 
 Wygląd ekranów definiowany jest w plikach XML, nazywanych układami (ang. layout). Każdy z widoków jest osobnym znacznikiem, a za pomocą argumentów można modyfikować wybrane parametry jak rozmiar, czy kolor. Wszystkie widoki w pliku XML muszą posiadać swojego rodzica, który definiuje jak mają one być traktowane w tym układzie. W Androidzie dostępnych jest ich kilka, a do najpopularniejszych należą: RelativeLayout (położenie widoków określane jest względem siebie), LinearLayout (układ liniowy, gdzie elementy GUI wyświetlane są jeden koło drugiego) i GridLayout (dzieli ekran na siatkę, składającą się z wierszy oraz kolumn, i pozwala umieścić widoki we wskazanych komórkach).
 
@@ -137,7 +137,7 @@ Rozwiązania mobilne cieszą się coraz większym zainteresowaniem. Tylko w skle
 Frameworki aplikacji internetowych powstały z myślą o zwolnieniu programisty z obowiązku pisania części kodu, który jest wspólny dla większości serwisów. Może to być dostęp do bazy danych, obsługa linków (ang.~routing), czy zarządzanie sesjami. Dodatkowo, pisanie aplikacji internetowej od podstaw, jest zadaniem czasochłonnym oraz dość trudnym. Frameworki są odpowiedzią na te problemy, dostarczając zestaw gotowych oraz przetestowanych rozwiązań, które należy dostosować do własnych potrzeb. Umożliwiają utworzenie struktury plików projektu, na bazie którego dalej będzie rozwijana aplikacja. Każdy z najpopularniejszych języków programowania oferuje duży wybór silników, przeznaczonych do tworzenia usług internetowych i np.: w C\# napisane zostały ASP.NET i MonoRail, w Javie - Spring i JavaServer Faces, a w Python - Django i Flask. Mogą się różnić przede wszystkim stopniem złożoności, dzięki czemu nadają się do różnych zastosowań - prezentują odmienne sposoby realizacji podobnych zadań.
 
 \subsubsection*{Początki Django}
-Django rozwijany jest jako wolne oprogramowanie na GitHub'ie, w ramach fundacji Django Software Foundation, ale skupia wokół siebie także wielu niezależnych twórców. Został napisany w Pythonie, stając się z czasem najpopularniejszym frameworkiem dla tego języka. Jego historia rozpoczęła się w 2003~r., kiedy to dwóch programistów Adrian Holovaty i Simon Willison zaczęli używać Pythona do tworzenia aplikacji webowych dla kilku serwisów informacyjnych, m.in. Lawrence.com. Praca w środowisku dziennikarskim, cechująca się napiętym grafikiem, wymagała niezwykle szybkiej realizacji zadań. Z tej konieczności opracowali własny silnik, który w 2005~r., już pod nazwą Django, został udostępniony publicznie. To właśnie szybkość oraz względna łatwość tworzenia aplikacji są jego głównymi zaletami.
+Django rozwijany jest jako wolne oprogramowanie na GitHubie, w ramach fundacji Django Software Foundation, ale skupia wokół siebie także wielu niezależnych twórców. Został napisany w Pythonie, stając się z czasem najpopularniejszym frameworkiem dla tego języka. Jego historia rozpoczęła się w 2003~r., kiedy to dwóch programistów Adrian Holovaty i Simon Willison zaczęli używać Pythona do tworzenia aplikacji webowych dla kilku serwisów informacyjnych, m.in. Lawrence.com. Praca w środowisku dziennikarskim, cechująca się napiętym grafikiem, wymagała niezwykle szybkiej realizacji zadań. Z tej konieczności opracowali własny silnik, który w 2005~r., już pod nazwą Django, został udostępniony publicznie. To właśnie szybkość oraz względna łatwość tworzenia aplikacji są jego głównymi zaletami.
 
 \subsubsection*{Charakterystyka}
 
@@ -170,7 +170,7 @@ Rolę kontrolera MVC, pełni w Django sam framework. Otrzymane zapytanie wysyła
 	\label{l:url}
 \end{singlespace}
 
-W przeciwieństwie do mikro frameworków, takich jak Flask, Django dostarcza programiście wielu gotowych rozwiązań, jak: dostęp do baz danych, klasy ORM, obsługa linków URL, uprawnienia użytkowników, automatycznie generowana strona administratora, szablony HTML i wiele innych. Dodatkowo posiada wbudowaną ochronę przed typowymi atakami, takimi jak: cross-site scripting (XSS), cross-site request forgery (CSRF), a także wstrzykiwanie SQL'a.
+W przeciwieństwie do mikro frameworków, takich jak Flask, Django dostarcza programiście wielu gotowych rozwiązań, jak: dostęp do baz danych, klasy ORM, obsługa linków URL, uprawnienia użytkowników, automatycznie generowana strona administratora, szablony HTML i wiele innych. Dodatkowo posiada wbudowaną ochronę przed typowymi atakami, takimi jak: cross-site scripting (XSS), cross-site request forgery (CSRF), a także wstrzykiwanie SQL.
 
 \subsubsection*{Programowanie aplikacji}
 
@@ -219,7 +219,7 @@ Do realizowania płatności w systemie wykorzystywany jest system PayPal. Jego s
 pozostałych bramek płatności jakie zostały wymienione w tej pracy, gdyż pełni on także 
 funkcję wirtualnej portmonetki. Oznacza to, że pieniądze nie trafiają od razu 
 na konto sprzedającego, jak to się dzieje w przypadku PayU, czy Dotpay. 
-Zapisywane są najpierw w postaci elektronicznej i dopiero na żądanie mogą 
+Zapisywane są one najpierw w postaci elektronicznej i dopiero na żądanie mogą 
 zostać wypłacone. Wiąże się to niestety z dłuższym czasem oczekiwania i pewną 
 prowizją. 
 
@@ -272,6 +272,8 @@ podawana jest metoda płatności jaką klient chce zapłacić, oraz kwota jaka m
 sprzedającego. Dodatkowo, w bardziej rozbudowanych systemach, możliwe jest 
 także wysłanie informacji o produkcie jaki jest kupowany.
 
+\newpage
+
 \begin{singlespace}
 	\captionof{listing}{Dane żądania utworzenia płatności.}
 	\vspace{-0.4cm}
@@ -282,6 +284,6 @@ także wysłanie informacji o produkcie jaki jest kupowany.
 \end{singlespace}
 
 W stworzonym systemie komunikacja z PayPalem odbywa się w podobny sposób. 
-Wykorzystana została jednak do tego specjalna biblioteka, dzięki czemu nie ma 
+Wykorzystana została jednak do tego specjalna biblioteka (PayPal Android SDK \cite{android_paypal_sdk}), dzięki czemu nie ma 
 potrzeby ręcznego budowania takich żądań. 
 

@@ -12,18 +12,18 @@ Do głównych zadań serwera należą: autoryzacja, zarządzanie i identyfikowan
 	\captionof{listing}{Mapowane adresy URL z pliku urls.py.}
 	\label{parq_urls}
 	\vspace{0.3cm}
-	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/urlpatterns.py}
+	\inputminted[fontsize=\footnotesize]{python}{src/imp/urlpatterns.py}
 \end{singlespace}
 
 \subsubsection*{Tworzenie konta i autoryzacja}
 
-Z procesem utworzenia konta w systemie przez kierowcę i kontrolera związanych jest kilka dodatkowych czynności, którymi są przypisanie roli oraz generowanie tokenu autoryzacyjnego. Wszyscy użytkownicy tworzeni są w oparciu o istniejący już w Django model użytkownika -- User, z modułu django.contrib.auth.models. Niezbędny jest jednak sposób, który pozwoli na odróżnienie kont kierowcy i kontrolera, aby można było nadać im odmienne uprawnienia. Do tego celu wykorzystany został dodatek djroles, napisany specjalnie na potrzeby tego systemu. Swoje działanie opiera na istniejących w Django grupach, z którymi domyślnie użytkownicy są w relacji wiele-do-wielu, czyli mogą należeć do kilku grup jednocześnie. Jego zadaniem jest umożliwienie wybrania zestawu grup, spośród których użytkownik może należeć tylko do jednej w tym samym czasie. Do tego celu tworzona jest tabela pomocnicza -- Role, w której umieszczane będą grupy, nazywane dalej rolami. Na listingu \ref{driver} pokazany został sposób, w jaki deklarowane są grupy, które będą używane do tworzenia ról. Jest to robione poprzez napisanie klasy Pythona, która dziedziczy po BaseRole - nazwa utworzonej roli będzie pokrywać się z nazwą klasy. Dzięki możliwemu wielodziedziczeniu w tym języku, do tego celu mogą zostać wykorzystane zdefiniowane wcześniej modele.
+Z procesem utworzenia konta w systemie przez kierowcę i kontrolera związanych jest kilka dodatkowych czynności, którymi są przypisanie roli oraz generowanie tokenu autoryzacyjnego. Wszyscy użytkownicy tworzeni są w oparciu o istniejący już w Django model użytkownika -- User, z modułu django.contrib.auth.models. Niezbędny jest jednak sposób, który pozwoli na odróżnienie kont kierowcy i kontrolera, aby można było nadać im odmienne uprawnienia. Do tego celu wykorzystany został dodatek djroles, napisany specjalnie na potrzeby tego systemu. Swoje działanie opiera na istniejących w Django grupach, z którymi domyślnie użytkownicy są w relacji wiele-do-wielu, czyli mogą należeć do kilku grup jednocześnie. Jego zadaniem jest umożliwienie wybrania zestawu grup, spośród których użytkownik może należeć tylko do jednej w tym samym czasie. Do tego celu tworzona jest tabela pomocnicza -- Role, w której umieszczane będą grupy, nazywane dalej rolami. Na listingu \ref{driver} pokazany został sposób, w jaki deklarowane są grupy, które będą używane do tworzenia ról. Jest to realizowane poprzez napisanie klasy Pythona, która dziedziczy po BaseRole - nazwa utworzonej roli będzie pokrywać się z nazwą klasy. Dzięki możliwemu wielodziedziczeniu w tym języku do tego celu mogą zostać wykorzystane zdefiniowane wcześniej modele.
 
 \begin{singlespace}
 	\captionof{listing}{Fragment modelu Driver.}
 	\label{driver}
 	\vspace{0.3cm}
-	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/driver.py}
+	\inputminted[fontsize=\footnotesize]{python}{src/imp/driver.py}
 \end{singlespace}
 
 \vspace{0.3cm}
@@ -34,7 +34,7 @@ Poza przypisaniem grupy, każdy użytkownik w systemie, niezależnie już od pe�
 	\captionof{listing}{Sygnały związane z tworzeniem konta w systemie.}
 	\label{sygnaly}
 	\vspace{0.3cm}
-	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/token_signal.py}
+	\inputminted[fontsize=\footnotesize]{python}{src/imp/token_signal.py}
 \end{singlespace}
 
 \subsubsection*{Identyfikacja pojazdów}
@@ -45,7 +45,7 @@ Z każdym pojazdem kierowcy w systemie powiązany jest identyfikator UUID (ang. 
 	\captionof{listing}{Badge - model identyfikatora.}
 	\label{model_badge}
 	\vspace{0.3cm}
-	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/badges-badge.py}
+	\inputminted[fontsize=\footnotesize]{python}{src/imp/badges-badge.py}
 \end{singlespace}
 
 \vspace{0.3cm}
@@ -60,26 +60,26 @@ Taryfikator oprócz powiązanych ze sobą opłat, musi zawierać także informac
 	\captionof{listing}{Tworzenie cotygodniowego taryfikatora.}
 	\label{schedule-create}
 	\vspace{0.3cm}
-	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/schedule-create.py}
+	\inputminted[fontsize=\footnotesize]{python}{src/imp/schedule-create.py}
 \end{singlespace}
 
 
 \subsubsection*{Kupno biletu}
 
-Za obliczenie kosztu biletu odpowiedzialne są fragmenty kodu przedstawione na listingach \ref{calculate-schedule} i \ref{calculate-charge}. Bazują na zasadzie naliczania opłaty stosowanej w szczecińskiej Strefie Płatnego Parkowania, w której stawki zmieniają się w zależności od długości postoju. W klasie Schedule obliczany jest najpierw czas trwania parkowania w minutach. Następnie po pobieraniu wszystkich opłat, w pętli każda z nich nalicza swoją część ceny (model Charge) zgodnie z jej czasem obowiązywania. W przypadku wyczerpania listy opłat przed zakończeniem postoju, ostatnia z nich (tak jak w SPP w Szczecinie) naliczy cenę dla pozostałych minut postoju. W pętli wszystkie opłaty cząstkowe są sumowane, wyznaczając w ten sposób koszt biletu.
+Za obliczenie kosztu biletu odpowiedzialne są fragmenty kodu przedstawione na listingach \ref{calculate-schedule} i \ref{calculate-charge}. Bazują na zasadzie naliczania opłaty stosowanej w szczecińskiej Strefie Płatnego Parkowania, w której stawki zmieniają się w zależności od długości postoju. W klasie Schedule obliczany jest najpierw czas trwania parkowania w minutach. Obliczenia te wykonywane są w oparciu o obiekt biletu (model Ticket), który zawiera informacje o początkowej i końcowej dacie parkowania. Następnie po pobieraniu wszystkich opłat, w pętli każda z nich nalicza swoją część ceny (model Charge) zgodnie z jej czasem obowiązywania. W przypadku wyczerpania listy opłat przed zakończeniem postoju, ostatnia z nich (tak jak w SPP w Szczecinie) naliczy cenę dla pozostałych minut postoju. W pętli wszystkie opłaty cząstkowe są sumowane, wyznaczając w ten sposób koszt biletu.
 
 \begin{singlespace}
 	\captionof{listing}{Obliczanie łącznej kwoty w klasie Schedule.}
 	\label{calculate-schedule}
 	\vspace{0.3cm}
-	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/schedule-calculate_price.py}
+	\inputminted[fontsize=\footnotesize]{python}{src/imp/schedule-calculate_price.py}
 \end{singlespace}
 
 \begin{singlespace}
 	\captionof{listing}{Obliczanie częstki ceny w pojedynczej opłacie - model Charge.}
 	\label{calculate-charge}
 	\vspace{0.3cm}
-	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/charge-calculate_price.py}
+	\inputminted[fontsize=\footnotesize]{python}{src/imp/charge-calculate_price.py}
 \end{singlespace}
 
 \vspace{0.3cm}
@@ -89,13 +89,13 @@ Obliczanie opłaty za postój następuje w momencie kupowania biletu, po czym po
 \subsubsection*{Doładowanie konta}
 
 %TODO sprawdzaj czy podane linie się zgadzają!
-Doładowywanie konta odbywa się dwuetapowo. Najpierw w aplikacji mobilnej użytkownik przelewa pieniądze za pomocą bramki płatności PayPal. W przypadku powodzenia transakcji zwrócony zostanie jej identyfikator, który wysyłany jest do serwera systemu ParQ. Na listingu \ref{payments_list} przedstawiony został widok odpowiedzialny za to żądanie. W linii 12 wywoływana jest metoda, w której otrzymany od aplikacji mobilnej identyfikator, przesyłany zostaje do serwera PayPal'a, celem uzyskania informacji o kwocie jaka została przelana. Następnie jeśli wszystko się zgadza, numer transakcji zapisywany jest w bazie danych (linia 13). Gdyby transakcja o takim identyfikatorze już istniała, doładowywanie zostanie przerwane. Tylko w razie powodzenia wykonany będzie dalszy fragment kodu, gdzie powiązana portmonetka użytkownika jest uzupełniana o wpłaconą kwotę.
+Doładowywanie konta odbywa się dwuetapowo. Najpierw w aplikacji mobilnej użytkownik przelewa pieniądze za pomocą bramki płatności PayPal. W przypadku powodzenia transakcji zwrócony zostanie jej identyfikator, który wysyłany jest do serwera systemu ParQ. Na listingu \ref{payments_list} przedstawiony został widok odpowiedzialny za to żądanie. Wywoływana jest w nim metoda, w której otrzymany od aplikacji mobilnej identyfikator, przesyłany zostaje do serwera PayPal'a, celem uzyskania informacji o kwocie jaka została przelana. Następnie jeśli wszystko się zgadza, numer transakcji zapisywany jest w bazie danych (linia 13). Gdyby transakcja o takim identyfikatorze już istniała, doładowywanie zostanie przerwane. Tylko w razie powodzenia wykonany będzie dalszy fragment kodu, gdzie powiązana portmonetka użytkownika jest uzupełniana o wpłaconą kwotę.
 
 \begin{singlespace}
 	\captionof{listing}{payment\_list - widok doładowania konta użytkownika.}
 	\label{payments_list}
 	\vspace{0.3cm}
-	\inputminted[fontsize=\footnotesize, linenos=true]{python}{src/imp/paypal-views.py}
+	\inputminted[fontsize=\footnotesize]{python}{src/imp/paypal-views.py}
 \end{singlespace}
 
 \vspace{0.3cm}
@@ -117,7 +117,7 @@ W ramach pracy zostały wykonane dwie oddzielne aplikacje mobilne -- dla kierowc
 
 \subsubsection*{Parsowanie danych}
 
-Format JSON jest obecnie najpopularniejszym formatem, wykorzystywanym do wymiany danych w architekturze REST. Wszystkie dane to zmienne, a ich nazwy są otoczone cudzysłowami. Wartości mogą być typu string (ciąg znaków), liczbami całkowitymi i zmiennopozycyjnymi, a także tablicami w których skład wchodzą wymienione wyżej zmienne, bądź obiektem JSON. Obiekty i tablice nie mają żadnych ograniczeń, jeśli chodzi o ich zagnieżdżanie. W celu wydobycia informacji, JSON musi być poddany odpowiedniej analizie, zarówno na serwerze jak i aplikacji mobilnej. W Androidzie parsowanie można wykonać za pomocą klas JSONObject oraz JSONArray z pakietu org.json. Ta druga służy do analizy tablic danych. 
+Do wymaganej komunikacji z serwerem wykorzystana została technologia JSON. Jest ona obecnie najpopularniejszym formatem stosowanym do wymiany danych w architekturze REST. W nim wszystkie dane to zmienne, a ich nazwy są otoczone cudzysłowami. Wartości mogą być typu string (ciąg znaków), liczbami całkowitymi i zmiennopozycyjnymi, a także tablicami w których skład wchodzą wymienione wyżej zmienne, bądź obiektem JSON. Obiekty i tablice nie mają żadnych ograniczeń, jeśli chodzi o ich zagnieżdżanie. W celu wydobycia informacji, JSON musi być poddany odpowiedniej analizie, zarówno na serwerze jak i aplikacji mobilnej. W Androidzie parsowanie można wykonać za pomocą klas JSONObject oraz JSONArray z pakietu org.json. Ta druga służy do analizy tablic danych. 
 \\
 \\
 JSONObject umożliwia parsowanie pojedynczego JSONa, a dane do analizy podawane są jako ciąg znaków (String) w konstruktorze. Metody tej klasy służące do wydobywania wartości, jako parametr przyjmują nazwę klucza z którym ta wartość jest związana. Są to m.in get(), getInt(), czy getString(), a ich użycie zależy od spodziewanego typu wartości przechowywanego w dokumencie. Istnieje także metoda getJSONObject(), która zwraca zagnieżdżony obiekt JSONa w postaci instancji klasy JSONObject. JSONArray instancjonowana jest w podobny sposób. Po wywołaniu metody getJSONObject() z indeksem elementu w parametrze, zwracany jest obiekt pojedynczego JSONa, czyli klasy JSONObject. Na listingu \ref{parsowanie} znajduje się przykład z wykorzystaniem kolekcji danych.
@@ -128,7 +128,7 @@ JSONObject umożliwia parsowanie pojedynczego JSONa, a dane do analizy podawane 
 	\captionof{listing}{Parsowanie jsona dla kolekcji pojazdów kierowcy.}
 	\label{parsowanie}
 	\vspace{0.3cm}
-	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/parsowanie-json.java}
+	\inputminted[fontsize=\footnotesize]{java}{src/imp/parsowanie-json.java}
 \end{singlespace}
 
 \vspace{0.3cm}
@@ -142,11 +142,13 @@ Komunikacja w systemie polega na wysyłaniu żądań przez aplikacje do serwera 
 \\
 Listing \ref{volley} przedstawia sposób, w jaki konstruowane są zapytania w tej bibliotece. Najpierw w konstruktorze podawany jest rodzaj metody HTTP oraz adres, na jaki żądanie ma zostać wysłane. Dwa następne parametry to obiekty klas anonimowych. Jeśli odpowiedz z serwera będzie zwrócona z kodem HTTP oznaczającym powodzenie operacji (2xx), to wykonana zostanie metoda onResponse() pierwszego obiektu. Parametr response zawiera dane odpowiedzi i to właśnie on będzie poddawaniu parsowaniu. Jeśli odpowiedz jest błędna, czyli wysłana została z kodem błędu (4xx lub 5xx), wywołana będzie onErrorResponse(). Tak utworzone zapytanie dodawane jest do kolejki zapytań, w której moment wysłania zależy od priorytetu jaki został nadany.
 
+\newpage
+
 \begin{singlespace}
 	\captionof{listing}{Wysłanie żądania.}
 	\label{volley}
 	\vspace{0.3cm}
-	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/scan-activity.java}
+	\inputminted[fontsize=\footnotesize]{java}{src/imp/scan-activity.java}
 \end{singlespace}
 
 \subsubsection*{Realizacja płatności}
@@ -160,7 +162,7 @@ Na listingu \ref{paypal1} przedstawiony został fragment, w którym za pomocą 
 	\captionof{listing}{Intencja rozpoczynająca aktywność PayPal'a.}
 	\label{paypal1}
 	\vspace{0.3cm}
-	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/get-payment.java}
+	\inputminted[fontsize=\footnotesize]{java}{src/imp/get-payment.java}
 \end{singlespace}
 
 \vspace{0.3cm}
@@ -175,14 +177,14 @@ Kontrola biletu możliwa jest w aplikacji przeznaczonej dla kontrolera. Odbywa s
 	\captionof{listing}{Intencja rozpoczynająca aktywność skanowania.}
 	\label{platnosc}
 	\vspace{0.3cm}
-	\inputminted[fontsize=\footnotesize, linenos=true]{java}{src/imp/start-scan.java}
+	\inputminted[fontsize=\footnotesize]{java}{src/imp/start-scan.java}
 \end{singlespace}
 
 \newpage
 
 \subsection{Wyniki działania systemu}
 
-Kierowca korzystający z systemu ParQ, oprócz logowania i rejestracji, może także doładować konto, dodawać nowe pojazdy oraz kupować bilety postojowe w przeznaczonej dla niego aplikacji. Kontroler natomiast ma możliwość przeprowadzenia kontroli zaparkowanego pojazdu. Poniżej znajduje się opis funkcjonującego systemu, z zrzutami ekranów z aplikacji mobilnych oraz wynikami działania serwera.
+Kierowca korzystający z systemu ParQ, oprócz logowania i rejestracji, może także doładować konto, dodawać nowe pojazdy oraz kupować bilety postojowe w przeznaczonej dla niego aplikacji. Kontroler natomiast ma możliwość przeprowadzenia kontroli zaparkowanego pojazdu. Poniżej znajduje się opis funkcjonującego systemu ze zrzutami ekranów z aplikacji mobilnych oraz wynikami działania serwera.
 \\
 \\
 W pierwszej kolejności opisana została aplikacja przeznaczona dla kierowcy korzystającego ze strefy płatnego parkowania. Po zalogowaniu do niej, wyświetlany jest ekran główny, znajdujący się na rys. 5.1. To tutaj użytkownik uzyskuje podstawowe dane powiązane ze swoim kontem, takie jak ilość pieniędzy znajdujących się w portmonetce, czy godziny obowiązywania płatnego postoju. Tutaj też są wyświetlane informacje o wszystkich aktywnych biletach postojowych, wraz z informacjami o pojeździe na który zostały zakupione i godziną ich zakończenia. Z ekranu głównego możliwe jest przejście do pozostałych ekranów aplikacji. Po naciśnięciu ikonki w lewym górnym rogu, wysuwa się menu boczne przedstawione na rys. 5.2. Na górze wyświetlana jest nazwa oraz e-mail zalogowanego użytkownika. Poniżej znajdują się opcje przenoszące do ekranów zakupu biletu, zarządzania pojazdami lub doładowywania konta.
@@ -201,7 +203,7 @@ W pierwszej kolejności opisana została aplikacja przeznaczona dla kierowcy kor
 	\end{minipage}
 \end{figure}
 
-Doładowywanie konta (rys. 5.3 i 5.4) rozpoczyna się od podania kwoty, jaką konto użytkownika w systemie ma zostać doładowane. Zatwierdzenie jej, powoduje pokazanie ekranów pochodzących z wykorzystywanej do realizacji płatności biblioteki -- PayPal Android SDK. Umożliwia ona wybranie metody płatności, uwierzytelnienie oraz zatwierdzenie transakcji. Po zakończeniu, użytkownik przenoszony jest na ekran główny, z zaktualizowanym stanem konta.
+Doładowywanie konta (rys. 5.3 i 5.4) rozpoczyna się od podania kwoty, jaką konto użytkownika w systemie ma zostać doładowane. Zatwierdzenie jej, powoduje pokazanie ekranów pochodzących z wykorzystywanej do realizacji płatności biblioteki -- PayPal Android SDK. Umożliwia ona wybranie metody płatności, uwierzytelnienie oraz zatwierdzenie transakcji. Po zakończeniu, użytkownik przenoszony jest na ekran główny ze zaktualizowanym stanem konta.
 
 \newpage
 

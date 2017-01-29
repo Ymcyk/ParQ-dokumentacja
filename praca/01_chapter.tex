@@ -1,10 +1,50 @@
 \section{Płatności elektroniczne i strefa płatnego parkowania}
 
-Poniższy rozdział w większości został poświęcony płatnościom elektronicznym. W pierwszej części przedstawiona została historia oraz poszczególne etapy ich rozwoju. Dalej dokonano analizy różnych metod płatności, ze względu na takie kryteria jak wielkość pojedynczej transakcji. Na końcu opisano zasady funkcjonowania szczecińskiej Strefy Płatnego Parkowania, razem z akceptowanymi w niej formami płatności.
+W pierwszej części poniższego rozdziału opisano zasady funkcjonowania szczecińskiej Strefy Płatnego Parkowania, razem z akceptowanymi w niej formami zapłaty. Następnie przedstawiona została historia płatności elektronicznych oraz poszczególne etapy ich rozwoju. Dalej dokonano analizy różnych metod zawierania transakcji w internecie. Ostatnia część poświęcona została bramkom płatniczym. 
 
-\subsection{Wprowadzenie}
+\subsection{Opłaty w strefie płatnego parkowania}
 
-Mimo, że e-commerce odnosi się ogólnie do stosowania urządzeń elektronicznych w zakupie oraz sprzedaży, to utożsamiany jest głównie z internetem. Będąc medium łączącym niejako wszystkie poprzednio używane (faks, telefon, telewizja), sieć pełni dominującą rolę w e-handlu. Tradycyjne formy przeprowadzania transakcji nie pasują do specyfiki biznesu internetowego. Opłata za pobraniem związana jest z wyższą prowizją, a przelewy wiążą się z długim czasem oczekiwania za zrealizowanie operacji finansowej. Nie są to efektywne metody płatności w internecie, gdzie niebagatelne znaczenie ma szybkość. Alternatywą, a także odpowiedzą na oczekiwania e-biznesu, są należące do bezgotówkowych form transakcji -- płatności elektroniczne. Są to wszelkiego rodzaju opłaty, zawierane za pośrednictwem internetu. Nazywane także e-płatnościami 
+Poniżej znajdują się informacje dotyczące szczecińskiej Strefy Płatnego Parkowania. Przedstawione są tutaj m.in. sposoby naliczania opłat, cennik, czy taryfikator. Informacje i wymagania związane z SPP są istotne dla tworzonego systemu, ponieważ to na ich bazie została zaimplementowana w nim logika biznesowa.
+
+\subsubsection*{Strefa Płatnego Parkowania w Szczecinie}
+
+Zgodnie z obwieszczeniem Rady Miasta Szczecin z dnia 26 maja 2014~r. \cite{obwieszczenie} strefa płatnego parkowania w Szczecinie podzielona jest na dwie podstrefy: A i B. W każdej z nich obowiązuje inny cennik, który został przedstawiony w tabeli \ref{cennik2}. W niej znajdują się także różne stawki, a to które z nich będą brane pod uwagę podczas naliczania opłaty, zależny od czasu postoju. Parkowanie w strefie jest płatne w dni robocze, w godzinach od 8:00 do 17:00.
+
+\begin{table}[h]
+	\caption{Stawki w strefie płatnego parkowania w Szczecinie.}
+	\label{cennik2}
+	\begin{center}
+		\begin{tabular}{| c | c | c | c |}
+			\hline
+			\multirow{2}{*}{L.p.} & \multirow{2}{*}{Opłaty jednorazowe} & \multicolumn{2}{| c |}{Kwota w zł.}\\
+			\cline{3-4}
+			&&Podstrefa A&Podstrefa B\\
+			\hline
+			1.&do 15 minut&0,70&0,40\\
+			\hline
+			2.&pierwsza godzina&2,80&1,60\\
+			\hline
+			3.&druga godzina&3,20&1,80\\
+			\hline
+			4.&trzecia godzina&3,60&2,00\\
+			\hline
+			5.&każda kolejna godzina&2,80&1,60\\
+			\hline
+		\end{tabular}
+	\end{center}	
+\end{table}
+
+Ważna jest także informacja odnośnie czasu w którym bilety obwiązują, a mianowicie moment zakupu jest także chwilą, w której zaczynają być ważne. Nie ma możliwości zakupu biletów tzw. ``do przodu'', których czas rozpoczęcia jest późniejszy od daty zakupu \cite{sumowanie}. 
+
+\subsubsection*{Zakup i kontrola biletu}
+
+Bilety postojowe są dostępne do kupienia w parkomatach, rozmieszczonych w miejscach gdzie obowiązuje strefa płatnego parkowania. Długość postoju ustalana jest na bazie kwoty, jaka została wpłacona oraz podstrefy, w której bilet został kupiony. Płatność może być realizowana gotówką, ale także przy użyciu karty SKA (Szczecińska Karta Aglomeracyjna), która w tym przypadku działa jak wirtualna portmonetka. Otrzymany wydruk potwierdzający opłacenie miejsca, należy umieścić za przednią szybą pojazdu. Kontroler sprawdza czy bilet został kupiony na odpowiednią podstrefę i czy nie przekroczono czasu postoju.
+
+Oprócz parkomatów, od pewnego czasu w Szczecinie bilet może być kupiony także poprzez aplikację na urządzenia mobilne, a jednym z takich rozwiązań jest system moBiLET. Dostępny w wielu miastach Polski, pozwala na zakup nie tylko biletów postojowych, ale także komunikacji miejskiej, czy kolejowych. Po pobraniu aplikacji i zarejestrowaniu, niezbędne jest jeszcze doładowanie wirtualnej portmonetki, powiązanej z kontem użytkownika. Tutaj użytkownik ma do wyboru kilka metod płatności, w tym SMS Premium, czy płatność kartą. Po tym kroku do płatności będą wykorzystywane pieniądze elektroniczne, zgromadzone w portmonetce. Proces ten będzie wyglądał podobnie w tworzonym w ramach tej pracy systemie.
+
+\subsection{Wprowadzenie do płatności elektronicznych}
+
+Mimo, że e-commerce odnosi się ogólnie do stosowania urządzeń elektronicznych w zakupie oraz sprzedaży, to utożsamiany jest głównie z internetem. Będąc medium łączącym niejako wszystkie poprzednio używane (faks, telefon, telewizja), sieć pełni dominującą rolę w e-handlu. Tradycyjne formy przeprowadzania transakcji nie pasują do specyfiki biznesu internetowego. Opłata za pobraniem związana jest z wyższą prowizją, a przelewy wiążą się z długim czasem oczekiwania na zrealizowanie operacji finansowej. Nie są to efektywne metody płatności, gdzie niebagatelne znaczenie ma szybkość. Alternatywą, a także odpowiedzią na oczekiwania e-biznesu, są należące do bezgotówkowych form transakcji -- płatności elektroniczne. Są to wszelkiego rodzaju opłaty zawierane za pośrednictwem internetu. Nazywane także e-płatnościami 
 \cite{elektroniczne_metody_platnosci}, przeprowadzane są różnymi kanałami 
 elektronicznymi, do których należą karty płatnicze, czy przelewy bankowe. 
 Bardzo popularne są ostatnio także usługi oferowane przez dostawców płatności 
@@ -21,7 +61,7 @@ mobilnych.
 
 \subsection{Ewolucja systemów płatniczych}
 
-Płatności elektroniczne mają swój początek w e-bankowości. Wprowadzanie przez 
+Płatności elektroniczne mają swój początek w e-bankowości. Wprowadzane przez 
 banki nowe udogodnienia technologiczne, 
 spowodowały radykalną zmianę w sposobie przeprowadzania operacji finansowych. 
 Przykładem tego mogą być karty płatnicze, zaprezentowane po raz pierwszy w 
@@ -71,16 +111,8 @@ niesie ze sobą korzystanie z internetu. La Jolla Bank FSB w 1994~r. był
 pierwszym bankiem, który umożliwił wykonywanie podstawowych operacji za 
 pośrednictwem sieci. Ciekawą i dość popularną także w Polsce odmianą 
 bankowości, jest bankowość wirtualna. Polega ona na obsłudze klienta tylko 
-internetowo, a banki takie często nie posiadają nawet swoich placówek. 
-Przykładem takich banków jest chociażby mBank. 
-%DEL
-Sieć, by móc się rozprzestrzeniać, musiała przez lata wykształcić takie 
-właściwości, jak: bezpieczeństwo, uniwersalność, interaktywność. Chcąc dokonać 
-płatności, czy sprawdzić konto w banku chcemy mieć pewność, że nasze dane są 
-bezpieczne. Istotny jest także sposób dostępu, coraz mniej zależny od używanego 
-systemu operacyjnego. Na przestrzeni lat najważniejszy okazał się jednak stały 
-rozwój. 
-%DEL
+internetowo, a takie banki często nie posiadają nawet swoich placówek. 
+
 \subsubsection*{Pierwsza generacja płatności internetowych}
 
 Podczas rozpoczętej w latach dziewięćdziesiątych pierwszej generacja płatności próbowano
@@ -138,9 +170,9 @@ przeprowadzania transakcji. Można wyróżnić:
 
 Milipłatności z mikropłatnościami dotyczą niewielkich, bardzo często 
 kilkugroszowych operacji finansowych. Ich definicja różni się co do górnej 
-granicy transakcji - najczęściej wynosi ok. 80 zł 
+granicy transakcji - najczęściej wynosi ok. 80~zł 
 \cite{rodzaje_platnosci}\cite{elektroniczne_metody_platnosci}. Oprócz kwoty, 
-dodatkowym wyróżnikiem jest krótki czas oraz łatwość w przeprowadzaniu 
+dodatkowym wyróżnikiem jest krótki czas oraz łatwość przeprowadzania 
 płatności. Użytkownik spodziewa się, że taki proces nie będzie wymagał podjęcia 
 przez niego wielu kroków - bardzo często opłaty w sklepach internetowych mogą 
 być zrealizowane bez konieczności opuszczania strony sprzedającego. Ze względu 
@@ -309,43 +341,3 @@ czy PayPal. Różnią się oni między sobą przede wszystkim prowizjami za wyp�
 pieniędzy, czy za skorzystanie z jakiejś metody płatności. Większość z nich 
 pełni głównie rolę pośrednią, znajdując się między bankiem kupującego, a 
 sprzedającego. 
-
-\subsection{Opłaty w strefie płatnego parkowania}
-
-Poniżej znajdują się informacje dotyczące szczecińskiej Strefy Płatnego Parkowania. Przedstawione są tutaj m.in. sposoby naliczania opłat, cennik, czy taryfikator. Informacje i wymagania związane z SPP są istotne dla tworzonego systemu, ponieważ to na ich bazie została zaimplementowana w nim logika biznesowa.
-
-\subsubsection*{Strefa Płatnego Parkowania w Szczecinie}
-
-Zgodnie z obwieszczeniem Rady Miasta Szczecin z dnia 26 maja 2014~r. \cite{obwieszczenie} strefa płatnego parkowania w Szczecinie podzielona jest na dwie podstrefy: A i B. W każdej z nich obowiązuje inny cennik, który został przedstawiony w tabeli \ref{cennik2}. W niej znajdują się także różne stawki, a to które z nich będą brane pod uwagę podczas naliczania opłaty, zależny od czasu postoju. Parkowanie w strefie jest płatne w dni robocze, w godzinach od 8:00 do 17:00.
-
-\begin{table}[h]
-	\caption{Stawki w strefie płatnego parkowania w Szczecinie.}
-	\label{cennik2}
-	\begin{center}
-		\begin{tabular}{| c | c | c | c |}
-			\hline
-			\multirow{2}{*}{L.p.} & \multirow{2}{*}{Opłaty jednorazowe} & \multicolumn{2}{| c |}{Kwota w zł.}\\
-			\cline{3-4}
-			&&Podstrefa A&Podstrefa B\\
-			\hline
-			1.&do 15 minut&0,70&0,40\\
-			\hline
-			2.&pierwsza godzina&2,80&1,60\\
-			\hline
-			3.&druga godzina&3,20&1,80\\
-			\hline
-			4.&trzecia godzina&3,60&2,00\\
-			\hline
-			5.&każda kolejna godzina&2,80&1,60\\
-			\hline
-		\end{tabular}
-	\end{center}	
-\end{table}
-
-Ważna jest także informacja odnośnie czasu w którym bilety obwiązują, a mianowicie moment zakupu jest także chwilą, w której zaczynają być ważne. Nie ma możliwości zakupu biletów tzw. ``do przodu'', których czas rozpoczęcia jest późniejszy od daty zakupu \cite{sumowanie}. 
-
-\subsubsection*{Zakup i kontrola biletu}
-
-Bilety postojowe są dostępne do kupienia w parkomatach, rozmieszczonych w miejscach gdzie obowiązuje strefa płatnego parkowania. Długość postoju ustalana jest na bazie kwoty, jaka została wpłacona oraz podstrefy, w której bilet został kupiony. Płatność może być realizowana gotówką, ale także przy użyciu karty SKA (Szczecińska Karta Aglomeracyjna), która w tym przypadku działa jak wirtualna portmonetka. Otrzymany wydruk potwierdzający opłacenie miejsca, należy umieścić za przednią szybą pojazdu. Kontroler sprawdza czy bilet został kupiony na odpowiednią podstrefę i czy nie przekroczono czasu postoju.
-
-Oprócz parkomatów, od pewnego czasu w Szczecinie bilet może być kupiony także poprzez aplikację na urządzenia mobilne, a jednym z takich rozwiązań jest system moBiLET. Dostępny w wielu miastach Polski, pozwala na zakup nie tylko biletów postojowych, ale także komunikacji miejskiej, czy kolejowych. Po pobraniu aplikacji i zarejestrowaniu, niezbędne jest jeszcze doładowanie wirtualnej portmonetki, powiązanej z kontem użytkownika. Tutaj użytkownik ma do wyboru kilka metod płatności, w tym SMS Premium, czy płatność kartą. Po tym kroku do płatności będą wykorzystywane pieniądze elektroniczne, zgromadzone w portmonetce. Proces ten będzie wyglądał podobnie w tworzonym w ramach tej pracy systemie.
