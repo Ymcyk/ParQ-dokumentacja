@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper]{article}
+\documentclass[12pt,a4paper,twoside]{article}
 
 \usepackage[T1]{fontenc}
 %\usepackage[polish]{babel}
@@ -11,7 +11,7 @@
 % tytule. Domyślnie pierwszy nie ma wcięcia.
 \usepackage{indentfirst}
 \usepackage{graphicx}
-\usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage[top=2.5cm, bottom=2.5cm, inner=2.5cm, outer=2.5cm]{geometry}
 \usepackage{setspace}
 \usepackage{hyperref}
 \usepackage[parfill]{parskip}
@@ -47,6 +47,7 @@
 	\nocite{*}
 	\pagenumbering{gobble}
 	% strona tytułowa
+	
 	\input{title_page}
 	
 	% pusta strona
@@ -60,15 +61,30 @@
 		\input{statement}
 		\newpage
 		
+		%pusta strona
+		%\mbox{}
+		%\thispagestyle{empty}
+		%\newpage
+		
 		%abstract
 		\input{abstract}
 		\newpage
 		
+		%pusta strona
+		%\mbox{}
+		%\thispagestyle{empty}
+		%\newpage
+		
 		% spis treści
 		\pagenumbering{arabic}
-		\setcounter{page}{3}
+		\setcounter{page}{4}
 		\tableofcontents
 		\newpage
+		
+		%pusta strona
+		%\mbox{}
+		%\thispagestyle{empty}
+		%\newpage
 		
 		% wstęp
 		\input{00_chapter}
